@@ -1,7 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { CountyData } from '@/data/kenyaCounties';
-import { X, Droplets, Users, MapPin, TrendingUp, TrendingDown } from 'lucide-react';
+import { X, Droplets, Users, MapPin, TrendingUp, TrendingDown, Download } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { Button } from '@/components/ui/button';
+import { generateCountyReport } from '@/utils/generateCountyReport';
 
 interface CountyDetailsPanelProps {
   county: CountyData | null;
@@ -37,20 +39,31 @@ const CountyDetailsPanel = ({ county, onClose }: CountyDetailsPanelProps) => {
         className="fixed right-0 top-0 h-full w-full sm:w-96 bg-card border-l border-border shadow-2xl z-50 overflow-y-auto"
       >
         {/* Header */}
-        <div className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-border p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`w-3 h-3 rounded-full ${
-              county.riskLevel === 'stable' ? 'bg-success' :
-              county.riskLevel === 'moderate' ? 'bg-warning' : 'bg-destructive'
-            }`} />
-            <h2 className="font-heading text-xl font-bold">{county.name} County</h2>
+        <div className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-border p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full ${
+                county.riskLevel === 'stable' ? 'bg-success' :
+                county.riskLevel === 'moderate' ? 'bg-warning' : 'bg-destructive'
+              }`} />
+              <h2 className="font-heading text-xl font-bold">{county.name} County</h2>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-colors"
+          <Button 
+            onClick={() => generateCountyReport(county)} 
+            variant="outline" 
+            size="sm" 
+            className="mt-3 w-full"
           >
-            <X className="w-5 h-5" />
-          </button>
+            <Download className="w-4 h-4 mr-2" />
+            Export PDF Report
+          </Button>
         </div>
 
         {/* Content */}
