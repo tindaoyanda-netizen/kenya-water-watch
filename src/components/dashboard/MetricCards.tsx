@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CountyData } from '@/data/kenyaCounties';
+import { CountyData } from '@/data/aquaguardData';
 import { Droplets, AlertTriangle, TrendingUp, CloudRain } from 'lucide-react';
 
 interface MetricCardsProps {

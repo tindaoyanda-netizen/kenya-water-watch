@@ -1,37 +1,37 @@
 import { motion } from 'framer-motion';
-import { Droplets, BarChart3, Globe, MapPin, TrendingUp, Shield } from 'lucide-react';
+import { Droplets, Globe, MapPin, Bell, CloudRain, Shield } from 'lucide-react';
 
 const features = [
   {
     icon: Droplets,
-    title: 'Real-Time Water Availability',
-    description: 'Monitor rivers, reservoirs, and boreholes across all 47 counties with live data updates.',
+    title: 'Real-Time Water Data',
+    description: 'County and town-level metrics for rivers, reservoirs, boreholes, and water kiosks across all 47 counties.',
     color: 'from-primary to-primary/70',
   },
   {
-    icon: BarChart3,
-    title: 'Personalized Dashboard',
-    description: 'Auto-detects your location to provide relevant water data and insights for your area.',
+    icon: Globe,
+    title: 'Weather & Flood Forecast',
+    description: 'Predictive insights for your area with rainfall forecasts, flood risk assessment, and early warning alerts.',
     color: 'from-accent to-secondary',
   },
   {
-    icon: Globe,
-    title: 'Science & Impact Insights',
-    description: 'Trend analysis, scenario simulation, and predictive modeling for informed decisions.',
+    icon: MapPin,
+    title: 'Personalized Alerts',
+    description: 'Notifications with precautions and daily insights tailored to your town and county location.',
     color: 'from-secondary to-accent',
   },
 ];
 
 const additionalFeatures = [
   {
-    icon: MapPin,
-    title: 'Location-Based Alerts',
-    description: 'Get notified about water stress changes in your county.',
+    icon: Bell,
+    title: 'Real-Time Alerts',
+    description: 'Instant notifications for water and flood warnings.',
   },
   {
-    icon: TrendingUp,
+    icon: CloudRain,
     title: 'Predictive Analytics',
-    description: 'AI-powered forecasts for water availability trends.',
+    description: 'AI-powered forecasts for water and weather trends.',
   },
   {
     icon: Shield,

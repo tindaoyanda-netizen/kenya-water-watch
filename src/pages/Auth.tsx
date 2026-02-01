@@ -4,12 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
-import { Droplets, Mail, Lock, User, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Droplets, Mail, Lock, User, ArrowRight, Eye, EyeOff, MapPin, Loader2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import { getCountyByCoordinates, getTownByCoordinates } from '@/data/aquaguardData';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
+  const [detectedLocation, setDetectedLocation] = useState<{ town: string; county: string } | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,29 +21,73 @@ const Auth = () => {
   });
   const navigate = useNavigate();
 
+  const detectLocation = () => {
+    setIsDetectingLocation(true);
+    
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          // Store coordinates
+          localStorage.setItem('ag_location', JSON.stringify({
+            lat: latitude,
+            lng: longitude,
+          }));
+          
+          // Find nearest county and town
+          const county = getCountyByCoordinates(latitude, longitude);
+          const town = getTownByCoordinates(latitude, longitude);
+          
+          if (county) {
+            setDetectedLocation({
+              town: town?.name || county.towns[0]?.name || 'Unknown',
+              county: county.name
+            });
+          }
+          
+          setIsDetectingLocation(false);
+        },
+        () => {
+          setIsDetectingLocation(false);
+          // Default to Nairobi
+          setDetectedLocation({ town: 'Westlands', county: 'Nairobi' });
+        }
+      );
+    } else {
+      setIsDetectingLocation(false);
+      setDetectedLocation({ town: 'Westlands', county: 'Nairobi' });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
     // Simulate authentication
-    localStorage.setItem('kww_user', JSON.stringify({
+    localStorage.setItem('ag_user', JSON.stringify({
       name: formData.name || 'User',
       email: formData.email,
       userType: formData.userType,
     }));
     
-    // Request geolocation
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          localStorage.setItem('kww_location', JSON.stringify({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          }));
-          navigate('/dashboard');
-        },
-        () => {
-          navigate('/dashboard');
-        }
-      );
+    // Request geolocation if not already detected
+    if (!detectedLocation) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            localStorage.setItem('ag_location', JSON.stringify({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            }));
+            navigate('/dashboard');
+          },
+          () => {
+            navigate('/dashboard');
+          }
+        );
+      } else {
+        navigate('/dashboard');
+      }
     } else {
       navigate('/dashboard');
     }
@@ -66,7 +113,7 @@ const Auth = () => {
               {isLogin ? 'Welcome Back' : 'Create Account'}
             </h1>
             <p className="text-muted-foreground mt-2">
-              {isLogin ? 'Sign in to access your dashboard' : 'Join Kenya Water Watch today'}
+              {isLogin ? 'Sign in to AquaGuard Kenya' : 'Join AquaGuard Kenya today'}
             </p>
           </div>
           
@@ -156,6 +203,41 @@ const Auth = () => {
                 </div>
               )}
               
+              {/* Location Detection */}
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label>Your Location</Label>
+                  {detectedLocation ? (
+                    <div className="flex items-center gap-2 p-3 bg-success/10 border border-success/20 rounded-lg">
+                      <MapPin className="w-5 h-5 text-success" />
+                      <span className="text-sm font-medium text-success">
+                        {detectedLocation.town}, {detectedLocation.county}
+                      </span>
+                    </div>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                      onClick={detectLocation}
+                      disabled={isDetectingLocation}
+                    >
+                      {isDetectingLocation ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Detecting...
+                        </>
+                      ) : (
+                        <>
+                          <MapPin className="w-4 h-4 mr-2" />
+                          Detect My Location
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              )}
+              
               {/* Submit Button */}
               <Button type="submit" variant="hero" size="lg" className="w-full group">
                 {isLogin ? 'Sign In' : 'Create Account'}
@@ -188,7 +270,7 @@ const Auth = () => {
           
           {/* Location Notice */}
           <p className="text-center text-sm text-muted-foreground mt-6">
-            📍 We'll ask for your location to personalize your water insights
+            📍 We'll personalize water & weather insights for your location
           </p>
         </motion.div>
       </div>

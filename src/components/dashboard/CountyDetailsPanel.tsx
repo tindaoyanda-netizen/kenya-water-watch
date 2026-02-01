@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { CountyData } from '@/data/kenyaCounties';
+import { CountyData } from '@/data/aquaguardData';
 import { X, Droplets, Users, MapPin, TrendingUp, TrendingDown, Download } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Button } from '@/components/ui/button';

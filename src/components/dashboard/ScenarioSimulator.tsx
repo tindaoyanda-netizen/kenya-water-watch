@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { CloudRain, Droplets, RefreshCw } from 'lucide-react';
+import { CountyData } from '@/data/aquaguardData';
 
 interface ScenarioSimulatorProps {
   onSimulate: (rainfall: number, consumption: number) => void;

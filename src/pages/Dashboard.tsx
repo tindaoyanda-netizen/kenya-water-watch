@@ -1,31 +1,66 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Navbar from '@/components/Navbar';
-import MetricCards from '@/components/dashboard/MetricCards';
-import KenyaMap from '@/components/dashboard/KenyaMap';
-import CountyDetailsPanel from '@/components/dashboard/CountyDetailsPanel';
-import ScenarioSimulator from '@/components/dashboard/ScenarioSimulator';
-import { CountyData, kenyaCounties, getNationalStats, getCountyByCoordinates } from '@/data/kenyaCounties';
-import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, RefreshCw, Download } from 'lucide-react';
+import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import LeftSidebar from '@/components/dashboard/LeftSidebar';
+import EnhancedKenyaMap from '@/components/dashboard/EnhancedKenyaMap';
+import RightDetailsPanel from '@/components/dashboard/RightDetailsPanel';
+import NotificationsPanel from '@/components/dashboard/NotificationsPanel';
+import { 
+  CountyData, 
+  kenyaCounties, 
+  getNationalStats, 
+  getCountyByCoordinates,
+  getTownByCoordinates,
+  generateNotifications,
+  Notification 
+} from '@/data/aquaguardData';
 
 const Dashboard = () => {
   const [selectedCounty, setSelectedCounty] = useState<CountyData | null>(null);
   const [timeRange, setTimeRange] = useState<'7' | '30' | '90'>('30');
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocationDisplay, setUserLocationDisplay] = useState<{ town: string; county: string } | null>(null);
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  
+  // Sidebar state
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  // Simulation state
+  const [rainfall, setRainfall] = useState(50);
+  const [consumption, setConsumption] = useState(50);
+  
+  // Overlay toggles
+  const [showWeatherOverlay, setShowWeatherOverlay] = useState(false);
+  const [showFloodOverlay, setShowFloodOverlay] = useState(true);
+  
+  // Notifications
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  
   const nationalStats = getNationalStats();
 
   useEffect(() => {
     // Try to get stored location
-    const storedLocation = localStorage.getItem('kww_location');
+    const storedLocation = localStorage.getItem('ag_location');
     if (storedLocation) {
       const loc = JSON.parse(storedLocation);
       setUserLocation(loc);
+      
       const nearestCounty = getCountyByCoordinates(loc.lat, loc.lng);
+      const nearestTown = getTownByCoordinates(loc.lat, loc.lng);
+      
       if (nearestCounty) {
         setSelectedCounty(nearestCounty);
+        setUserLocationDisplay({
+          town: nearestTown?.name || nearestCounty.towns[0]?.name || 'Unknown',
+          county: nearestCounty.name
+        });
+        
+        // Generate notifications for user's county
+        setNotifications(generateNotifications(nearestCounty.id));
       }
+    } else {
+      setNotifications(generateNotifications());
     }
 
     // Simulate real-time updates
@@ -36,148 +71,106 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSimulate = (rainfall: number, consumption: number) => {
-    // In a real app, this would update the map and metrics
-    console.log('Simulating:', { rainfall, consumption });
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const handleNotificationClick = (notification: Notification) => {
+    // Mark as read
+    setNotifications(prev => 
+      prev.map(n => n.id === notification.id ? { ...n, read: true } : n)
+    );
+    
+    // Zoom to county
+    if (notification.countyId !== 'national') {
+      const county = kenyaCounties.find(c => c.id === notification.countyId);
+      if (county) {
+        setSelectedCounty(county);
+        setShowNotifications(false);
+      }
+    }
   };
 
-  const handleExportPDF = () => {
-    // Simulate PDF export
-    alert('PDF export would be generated here with county water status data.');
+  const handleMarkAllRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
+
+  // Responsive sidebar width
+  const sidebarWidth = sidebarCollapsed ? 64 : 320;
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      {/* Header */}
+      <DashboardHeader
+        userLocation={userLocationDisplay}
+        lastUpdate={lastUpdate}
+        notifications={notifications}
+        unreadCount={unreadCount}
+        onNotificationsClick={() => setShowNotifications(true)}
+      />
       
-      <main className="pt-20 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
+      {/* Left Sidebar */}
+      <LeftSidebar
+        timeRange={timeRange}
+        onTimeRangeChange={setTimeRange}
+        rainfall={rainfall}
+        consumption={consumption}
+        onRainfallChange={setRainfall}
+        onConsumptionChange={setConsumption}
+        showWeatherOverlay={showWeatherOverlay}
+        onWeatherOverlayChange={setShowWeatherOverlay}
+        showFloodOverlay={showFloodOverlay}
+        onFloodOverlayChange={setShowFloodOverlay}
+        selectedCounty={selectedCounty}
+        nationalStats={nationalStats}
+        isCollapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+      />
+      
+      {/* Main Content */}
+      <main 
+        className="pt-16 transition-all duration-300"
+        style={{ 
+          marginLeft: sidebarWidth,
+          width: `calc(100% - ${sidebarWidth}px)` 
+        }}
+      >
+        <div className="p-4 lg:p-6">
+          {/* Map Section */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="h-[calc(100vh-8rem)]"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
-                  Water Monitoring Dashboard
-                </h1>
-                <div className="flex items-center gap-4 mt-2">
-                  <span className="text-sm text-muted-foreground flex items-center gap-1">
-                    <RefreshCw className="w-3 h-3" />
-                    Updated {lastUpdate.toLocaleTimeString()}
-                  </span>
-                  {userLocation && (
-                    <span className="text-sm text-primary flex items-center gap-1">
-                      <MapPin className="w-3 h-3" />
-                      Location detected
-                    </span>
-                  )}
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                {/* Time Range Selector */}
-                <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
-                  {(['7', '30', '90'] as const).map((range) => (
-                    <button
-                      key={range}
-                      onClick={() => setTimeRange(range)}
-                      className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
-                        timeRange === range 
-                          ? 'bg-card shadow text-foreground' 
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      {range}d
-                    </button>
-                  ))}
-                </div>
-                
-                <Button variant="outline" size="sm" onClick={handleExportPDF}>
-                  <Download className="w-4 h-4 mr-2" />
-                  Export
-                </Button>
-              </div>
-            </div>
+            <EnhancedKenyaMap
+              counties={kenyaCounties}
+              onCountySelect={setSelectedCounty}
+              selectedCounty={selectedCounty}
+              userLocation={userLocation}
+              showWeatherOverlay={showWeatherOverlay}
+              showFloodOverlay={showFloodOverlay}
+              simulationRainfall={rainfall}
+              simulationConsumption={consumption}
+            />
           </motion.div>
-
-          {/* Metric Cards */}
-          <div className="mb-6">
-            <MetricCards selectedCounty={selectedCounty} nationalStats={nationalStats} />
-          </div>
-
-          {/* Main Content Grid */}
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* Map Section */}
-            <div className="lg:col-span-2">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                <KenyaMap 
-                  onCountySelect={setSelectedCounty} 
-                  selectedCounty={selectedCounty}
-                />
-              </motion.div>
-            </div>
-
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Scenario Simulator */}
-              <ScenarioSimulator onSimulate={handleSimulate} />
-              
-              {/* County List */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="bg-card rounded-2xl p-4 border border-border"
-              >
-                <h3 className="font-heading font-semibold mb-4">Counties by Risk</h3>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {[...kenyaCounties]
-                    .sort((a, b) => b.waterStress - a.waterStress)
-                    .slice(0, 8)
-                    .map((county) => (
-                      <button
-                        key={county.id}
-                        onClick={() => setSelectedCounty(county)}
-                        className={`w-full flex items-center justify-between p-3 rounded-lg transition-all hover:bg-muted ${
-                          selectedCounty?.id === county.id ? 'bg-muted' : ''
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full ${
-                            county.riskLevel === 'stable' ? 'bg-success' :
-                            county.riskLevel === 'moderate' ? 'bg-warning' : 'bg-destructive'
-                          }`} />
-                          <span className="font-medium text-sm">{county.name}</span>
-                        </div>
-                        <span className={`text-sm font-bold ${
-                          county.waterStress <= 40 ? 'text-success' :
-                          county.waterStress <= 70 ? 'text-warning' : 'text-destructive'
-                        }`}>
-                          {county.waterStress}
-                        </span>
-                      </button>
-                    ))}
-                </div>
-              </motion.div>
-            </div>
-          </div>
         </div>
       </main>
 
-      {/* County Details Panel */}
+      {/* Right Details Panel */}
       {selectedCounty && (
-        <CountyDetailsPanel 
+        <RightDetailsPanel 
           county={selectedCounty} 
           onClose={() => setSelectedCounty(null)} 
         />
       )}
+      
+      {/* Notifications Panel */}
+      <NotificationsPanel
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        notifications={notifications}
+        onNotificationClick={handleNotificationClick}
+        onMarkAllRead={handleMarkAllRead}
+      />
     </div>
   );
 };
