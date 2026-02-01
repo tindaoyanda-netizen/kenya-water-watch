@@ -22,7 +22,7 @@ const Navbar = () => {
               <div className="absolute inset-0 bg-accent/30 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
             <span className={`font-heading font-bold text-xl ${isHome ? 'text-white' : 'text-foreground'}`}>
-              Kenya Water Watch
+              AquaGuard Kenya
             </span>
           </Link>
 

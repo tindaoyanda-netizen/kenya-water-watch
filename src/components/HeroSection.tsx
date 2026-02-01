@@ -46,9 +46,9 @@ const HeroSection = () => {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="font-heading text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight"
           >
-            Real-Time Water Monitoring for a{' '}
+            AquaGuard Kenya —{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-secondary">
-              Water-Scarce Kenya
+              Real-Time Water & Weather Monitoring
             </span>
           </motion.h1>
           
@@ -59,8 +59,7 @@ const HeroSection = () => {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="text-lg sm:text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed"
           >
-            Track availability, understand scarcity risks, and make data-driven decisions — 
-            personalized for your location.
+            Track water availability, forecast weather, predict floods, and receive personalized alerts for your town and county.
           </motion.p>
           
           {/* CTA Button */}

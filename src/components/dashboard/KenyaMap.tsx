@@ -1,4 +1,4 @@
-import { CountyData, kenyaCounties } from '@/data/kenyaCounties';
+import { CountyData, kenyaCounties } from '@/data/aquaguardData';
 import { motion } from 'framer-motion';
 
 interface KenyaMapProps {
