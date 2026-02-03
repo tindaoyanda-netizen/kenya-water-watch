@@ -14,16 +14,173 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      environmental_reports: {
+        Row: {
+          ai_analysis: string | null
+          ai_confidence_score: number | null
+          county_id: string
+          created_at: string
+          description: string | null
+          duplicate_of: string | null
+          id: string
+          image_url: string | null
+          is_duplicate: boolean | null
+          latitude: number
+          longitude: number
+          report_type: Database["public"]["Enums"]["report_type"]
+          reporter_id: string
+          status: Database["public"]["Enums"]["report_status"]
+          town_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_analysis?: string | null
+          ai_confidence_score?: number | null
+          county_id: string
+          created_at?: string
+          description?: string | null
+          duplicate_of?: string | null
+          id?: string
+          image_url?: string | null
+          is_duplicate?: boolean | null
+          latitude: number
+          longitude: number
+          report_type: Database["public"]["Enums"]["report_type"]
+          reporter_id: string
+          status?: Database["public"]["Enums"]["report_status"]
+          town_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_analysis?: string | null
+          ai_confidence_score?: number | null
+          county_id?: string
+          created_at?: string
+          description?: string | null
+          duplicate_of?: string | null
+          id?: string
+          image_url?: string | null
+          is_duplicate?: boolean | null
+          latitude?: number
+          longitude?: number
+          report_type?: Database["public"]["Enums"]["report_type"]
+          reporter_id?: string
+          status?: Database["public"]["Enums"]["report_status"]
+          town_name?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "environmental_reports_duplicate_of_fkey"
+            columns: ["duplicate_of"]
+            isOneToOne: false
+            referencedRelation: "environmental_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          county_id: string
+          created_at: string
+          full_name: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          county_id: string
+          created_at?: string
+          full_name: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          county_id?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      report_verifications: {
+        Row: {
+          action: Database["public"]["Enums"]["report_status"]
+          admin_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          report_id: string
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["report_status"]
+          admin_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          report_id: string
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["report_status"]
+          admin_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_verifications_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "environmental_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_county: { Args: { _user_id: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "resident" | "county_admin"
+      report_status: "pending" | "verified" | "rejected"
+      report_type:
+        | "flooded_road"
+        | "dry_borehole"
+        | "broken_kiosk"
+        | "overflowing_river"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +307,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["resident", "county_admin"],
+      report_status: ["pending", "verified", "rejected"],
+      report_type: [
+        "flooded_road",
+        "dry_borehole",
+        "broken_kiosk",
+        "overflowing_river",
+      ],
+    },
   },
 } as const
