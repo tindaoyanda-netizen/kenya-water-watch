@@ -36,13 +36,19 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey, {
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    
+    // Auth client uses the user's token for authentication verification
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
+    
+    // Admin client uses service role for system-level DB updates (bypasses RLS)
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
     if (claimsError || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
@@ -64,7 +70,7 @@ serve(async (req) => {
     console.log("Analyzing report:", { reportId, reportType, countyId });
 
     // Fetch similar recent reports in the area for duplicate detection
-    const { data: similarReports } = await supabase
+    const { data: similarReports } = await supabaseAdmin
       .from("environmental_reports")
       .select("id, report_type, latitude, longitude, created_at, description")
       .eq("county_id", countyId)
@@ -208,7 +214,7 @@ Provide a JSON response with confidence_score and analysis.`;
     }
 
     // Update the report with AI analysis
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from("environmental_reports")
       .update({
         ai_confidence_score: confidenceScore,
