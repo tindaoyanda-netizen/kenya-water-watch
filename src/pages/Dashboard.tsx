@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
@@ -12,6 +12,7 @@ import AdminDashboard from '@/components/admin/AdminDashboard';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Shield, Plus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useRealtimeReports } from '@/hooks/useRealtimeReports';
 import { 
   CountyData, 
   kenyaCounties, 
@@ -117,16 +118,22 @@ const Dashboard = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
-  const handleReportSubmitted = () => {
-    // Refresh data after report submission
+  const handleReportSubmitted = useCallback(() => {
     setLastUpdate(new Date());
-  };
+  }, []);
 
   // Responsive sidebar width
   const sidebarWidth = sidebarCollapsed ? 64 : 320;
 
   // Get user's county ID
   const userCountyId = profile?.county_id || selectedCounty?.id || null;
+
+  // Real-time notifications for county admins
+  useRealtimeReports({
+    countyId: userCountyId,
+    isCountyAdmin,
+    onNewReport: handleReportSubmitted,
+  });
 
   return (
     <div className="min-h-screen bg-background">
