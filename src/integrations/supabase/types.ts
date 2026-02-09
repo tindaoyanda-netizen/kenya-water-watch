@@ -106,6 +106,38 @@ export type Database = {
         }
         Relationships: []
       }
+      report_replies: {
+        Row: {
+          admin_id: string
+          created_at: string
+          id: string
+          message: string
+          report_id: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          id?: string
+          message: string
+          report_id: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_replies_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "environmental_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_verifications: {
         Row: {
           action: Database["public"]["Enums"]["report_status"]

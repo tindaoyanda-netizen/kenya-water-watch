@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, 
@@ -13,7 +13,9 @@ import {
   ChevronRight,
   Loader2,
   Info,
-  Brain
+  Brain,
+  Send,
+  Reply
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -40,6 +42,14 @@ interface EnvironmentalReport {
   created_at: string;
 }
 
+interface ReportReply {
+  id: string;
+  report_id: string;
+  admin_id: string;
+  message: string;
+  created_at: string;
+}
+
 interface AdminDashboardProps {
   isOpen: boolean;
   onClose: () => void;
@@ -60,6 +70,9 @@ const AdminDashboard = ({ isOpen, onClose, userCountyId }: AdminDashboardProps) 
   const [isProcessing, setIsProcessing] = useState(false);
   const [comment, setComment] = useState('');
   const [filter, setFilter] = useState<'all' | 'pending' | 'verified' | 'rejected'>('pending');
+  const [replies, setReplies] = useState<ReportReply[]>([]);
+  const [replyMessage, setReplyMessage] = useState('');
+  const [isSendingReply, setIsSendingReply] = useState(false);
   const { toast } = useToast();
 
   const countyName = kenyaCounties.find(c => c.id === userCountyId)?.name || 'Unknown';
@@ -91,6 +104,15 @@ const AdminDashboard = ({ isOpen, onClose, userCountyId }: AdminDashboardProps) 
     }
   }, [isOpen, userCountyId]);
 
+  // Fetch replies when a report is selected
+  useEffect(() => {
+    if (selectedReport) {
+      fetchReplies(selectedReport.id);
+    } else {
+      setReplies([]);
+    }
+  }, [selectedReport?.id]);
+
   const fetchReports = async () => {
     setIsLoading(true);
     try {
@@ -111,6 +133,54 @@ const AdminDashboard = ({ isOpen, onClose, userCountyId }: AdminDashboardProps) 
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchReplies = async (reportId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('report_replies')
+        .select('*')
+        .eq('report_id', reportId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setReplies((data as ReportReply[]) || []);
+    } catch (error) {
+      console.error('Error fetching replies:', error);
+    }
+  };
+
+  const sendReply = async () => {
+    if (!selectedReport || !replyMessage.trim()) return;
+
+    setIsSendingReply(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('report_replies')
+        .insert({
+          report_id: selectedReport.id,
+          admin_id: user.id,
+          message: replyMessage.trim(),
+        });
+
+      if (error) throw error;
+
+      setReplyMessage('');
+      fetchReplies(selectedReport.id);
+      toast({ title: 'Reply sent', description: 'Your response has been posted.' });
+    } catch (error) {
+      console.error('Reply error:', error);
+      toast({
+        title: 'Failed to send reply',
+        description: error instanceof Error ? error.message : 'Please try again',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSendingReply(false);
     }
   };
 
@@ -450,6 +520,56 @@ const AdminDashboard = ({ isOpen, onClose, userCountyId }: AdminDashboardProps) 
                           </div>
                         </>
                       )}
+
+                      {/* Reply Thread */}
+                      <div className="border-t border-border pt-4 space-y-3">
+                        <h4 className="text-sm font-medium flex items-center gap-2">
+                          <Reply className="w-4 h-4" />
+                          Admin Replies ({replies.length})
+                        </h4>
+
+                        {replies.length > 0 && (
+                          <div className="space-y-2 max-h-[200px] overflow-y-auto">
+                            {replies.map((reply) => (
+                              <div
+                                key={reply.id}
+                                className="p-3 bg-primary/5 border border-primary/10 rounded-lg"
+                              >
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Shield className="w-3 h-3 text-primary" />
+                                  <span className="text-xs font-medium text-primary">County Admin</span>
+                                  <span className="text-xs text-muted-foreground ml-auto">
+                                    {format(new Date(reply.created_at), 'MMM d, h:mm a')}
+                                  </span>
+                                </div>
+                                <p className="text-sm">{reply.message}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Reply Input */}
+                        <div className="flex gap-2">
+                          <Textarea
+                            placeholder="Type a reply to the reporter..."
+                            value={replyMessage}
+                            onChange={(e) => setReplyMessage(e.target.value)}
+                            className="min-h-[60px] flex-1"
+                          />
+                          <Button
+                            size="icon"
+                            onClick={sendReply}
+                            disabled={isSendingReply || !replyMessage.trim()}
+                            className="self-end"
+                          >
+                            {isSendingReply ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Send className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   </motion.div>
                 ) : (
