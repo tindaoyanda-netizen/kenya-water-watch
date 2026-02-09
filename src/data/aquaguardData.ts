@@ -449,6 +449,28 @@ export const kenyaCounties: CountyData[] = [
       { date: '2026-02-04', rainfall: 30, condition: 'rain' },
     ]}
   },
+  {
+    id: 'siaya',
+    name: 'Siaya',
+    waterAvailability: 68,
+    waterStress: 45,
+    population: 993183,
+    recentRainfall: 65,
+    riskLevel: 'moderate',
+    floodRisk: { countyId: 'siaya', riskLevel: 'moderate', probability: 38, affectedAreas: ['Yala Swamp', 'Bondo lowlands'], precautions: ['Monitor Lake Victoria levels', 'Avoid Yala swamp during rains'] },
+    waterSources: { reservoirs: 2, rivers: 5, boreholes: 78, kiosks: 112 },
+    coordinates: { lat: 0.0607, lng: 34.2422 },
+    trend: [64, 66, 68, 70, 67, 64, 62, 65, 68, 71, 68, 65, 63, 66, 69, 71, 68, 65, 63, 66, 69, 72, 69, 66, 64, 67, 70, 72, 69, 68],
+    towns: [
+      { id: 'sya-siaya', name: 'Siaya Town', countyId: 'siaya', coordinates: { lat: 0.0607, lng: 34.2422 }, population: 47168 },
+      { id: 'sya-bondo', name: 'Bondo', countyId: 'siaya', coordinates: { lat: -0.0833, lng: 34.2667 }, population: 52754 },
+    ],
+    weather: { countyId: 'siaya', temperature: 26, humidity: 74, rainfall24h: 18, forecast: [
+      { date: '2026-02-02', rainfall: 20, condition: 'rain' },
+      { date: '2026-02-03', rainfall: 12, condition: 'cloudy' },
+      { date: '2026-02-04', rainfall: 5, condition: 'cloudy' },
+    ]}
+  },
 ];
 
 // Generate sample notifications
