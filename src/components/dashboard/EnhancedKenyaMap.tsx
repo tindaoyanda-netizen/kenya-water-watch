@@ -84,6 +84,7 @@ const EnhancedKenyaMap = ({
     nyeri: { x: 180, y: 218, size: 28 },
     machakos: { x: 195, y: 290, size: 30 },
     kajiado: { x: 165, y: 315, size: 38 },
+    siaya: { x: 82, y: 195, size: 28 },
   };
 
   // Water source pin positions (relative to county)

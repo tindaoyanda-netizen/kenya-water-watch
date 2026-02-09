@@ -211,6 +211,18 @@ export const kenyaCounties: CountyData[] = [
     coordinates: { lat: 0.2827, lng: 34.7519 },
     trend: [82, 84, 86, 88, 85, 82, 80, 83, 86, 89, 86, 83, 81, 84, 87, 89, 86, 83, 81, 84, 87, 90, 87, 84, 82, 85, 88, 90, 87, 85]
   },
+  {
+    id: 'siaya',
+    name: 'Siaya',
+    waterAvailability: 68,
+    waterStress: 45,
+    population: 993183,
+    recentRainfall: 65,
+    riskLevel: 'moderate',
+    waterSources: { reservoirs: 2, rivers: 5, boreholes: 78 },
+    coordinates: { lat: 0.0607, lng: 34.2422 },
+    trend: [64, 66, 68, 70, 67, 64, 62, 65, 68, 71, 68, 65, 63, 66, 69, 71, 68, 65, 63, 66, 69, 72, 69, 66, 64, 67, 70, 72, 69, 68]
+  },
 ];
 
 export const getCountyByCoordinates = (lat: number, lng: number): CountyData | null => {
