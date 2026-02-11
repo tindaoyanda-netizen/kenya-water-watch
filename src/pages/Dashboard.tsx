@@ -9,8 +9,9 @@ import NotificationsPanel from '@/components/dashboard/NotificationsPanel';
 import ReportForm from '@/components/reporting/ReportForm';
 import ReportMarkers from '@/components/reporting/ReportMarkers';
 import AdminDashboard from '@/components/admin/AdminDashboard';
+import MyReports from '@/components/reporting/MyReports';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Shield, Plus } from 'lucide-react';
+import { AlertTriangle, Shield, Plus, FileText } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRealtimeReports } from '@/hooks/useRealtimeReports';
 import { 
@@ -51,6 +52,7 @@ const Dashboard = () => {
   // Reporting & Admin
   const [showReportForm, setShowReportForm] = useState(false);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [showMyReports, setShowMyReports] = useState(false);
   
   const nationalStats = getNationalStats();
 
@@ -186,6 +188,17 @@ const Dashboard = () => {
               </Button>
             )}
             
+            {user && !isCountyAdmin && (
+              <Button
+                onClick={() => setShowMyReports(true)}
+                variant="outline"
+                className="gap-2"
+              >
+                <FileText className="w-4 h-4" />
+                My Reports
+              </Button>
+            )}
+            
             {isCountyAdmin && (
               <Button
                 onClick={() => setShowAdminDashboard(true)}
@@ -265,6 +278,14 @@ const Dashboard = () => {
           isOpen={showAdminDashboard}
           onClose={() => setShowAdminDashboard(false)}
           userCountyId={userCountyId}
+        />
+      )}
+      
+      {/* My Reports */}
+      {user && (
+        <MyReports
+          isOpen={showMyReports}
+          onClose={() => setShowMyReports(false)}
         />
       )}
     </div>
