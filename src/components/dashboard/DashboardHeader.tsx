@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Bell, MapPin, RefreshCw, User, LogOut, Settings, ChevronDown } from 'lucide-react';
+import { Bell, MapPin, RefreshCw, User, LogOut, Settings, ChevronDown, Menu } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +17,8 @@ interface DashboardHeaderProps {
   notifications: Notification[];
   unreadCount: number;
   onNotificationsClick: () => void;
+  onMenuClick?: () => void;
+  showMenuButton?: boolean;
 }
 
 const DashboardHeader = ({
@@ -25,14 +27,21 @@ const DashboardHeader = ({
   notifications,
   unreadCount,
   onNotificationsClick,
+  onMenuClick,
+  showMenuButton,
 }: DashboardHeaderProps) => {
   return (
     <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-sm border-b border-border">
-      <div className="flex items-center justify-between h-16 px-4 lg:px-6">
-        {/* Left: Logo & Location */}
-        <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between h-14 sm:h-16 px-3 sm:px-4 lg:px-6">
+        {/* Left: Menu + Logo & Location */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          {showMenuButton && (
+            <Button variant="ghost" size="icon" onClick={onMenuClick} className="shrink-0">
+              <Menu className="w-5 h-5" />
+            </Button>
+          )}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0">
               <span className="text-white font-bold text-sm">AG</span>
             </div>
             <span className="font-heading font-bold text-lg hidden sm:block">AquaGuard</span>
@@ -42,7 +51,7 @@ const DashboardHeader = ({
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-muted rounded-lg"
+              className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-muted rounded-lg"
             >
               <MapPin className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium">
@@ -53,9 +62,9 @@ const DashboardHeader = ({
         </div>
 
         {/* Right: Update time, Notifications, Profile */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Last Updated */}
-          <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
+          <div className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground">
             <RefreshCw className="w-3 h-3" />
             <span>Updated {lastUpdate.toLocaleTimeString()}</span>
           </div>
@@ -78,7 +87,7 @@ const DashboardHeader = ({
           {/* Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-1 sm:px-2">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <User className="w-4 h-4 text-primary" />
                 </div>
@@ -108,9 +117,9 @@ const DashboardHeader = ({
       
       {/* Mobile Location Bar */}
       {userLocation && (
-        <div className="md:hidden flex items-center gap-2 px-4 py-2 bg-muted/50 border-t border-border">
-          <MapPin className="w-4 h-4 text-primary" />
-          <span className="text-sm">
+        <div className="lg:hidden flex items-center gap-2 px-3 sm:px-4 py-2 bg-muted/50 border-t border-border">
+          <MapPin className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-sm truncate">
             {userLocation.town}, {userLocation.county}
           </span>
         </div>
