@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import LeftSidebar from '@/components/dashboard/LeftSidebar';
 import EnhancedKenyaMap from '@/components/dashboard/EnhancedKenyaMap';
@@ -11,9 +11,10 @@ import ReportMarkers from '@/components/reporting/ReportMarkers';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import MyReports from '@/components/reporting/MyReports';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Shield, Plus, FileText } from 'lucide-react';
+import { AlertTriangle, Shield, Plus, FileText, Menu } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRealtimeReports } from '@/hooks/useRealtimeReports';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   CountyData, 
   kenyaCounties, 
@@ -26,6 +27,7 @@ import {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { user, profile, role, isLoading: authLoading, isCountyAdmin } = useAuth();
   
   const [selectedCounty, setSelectedCounty] = useState<CountyData | null>(null);
@@ -34,8 +36,9 @@ const Dashboard = () => {
   const [userLocationDisplay, setUserLocationDisplay] = useState<{ town: string; county: string } | null>(null);
   const [lastUpdate, setLastUpdate] = useState(new Date());
   
-  // Sidebar state
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  // Sidebar state - collapsed by default on mobile
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   
   // Simulation state
   const [rainfall, setRainfall] = useState(50);
@@ -56,8 +59,17 @@ const Dashboard = () => {
   
   const nationalStats = getNationalStats();
 
+  // Auto-collapse sidebar on mobile
   useEffect(() => {
-    // Get user's county from profile or stored location
+    if (isMobile) {
+      setSidebarCollapsed(true);
+      setMobileSidebarOpen(false);
+    } else {
+      setSidebarCollapsed(false);
+    }
+  }, [isMobile]);
+
+  useEffect(() => {
     if (profile?.county_id) {
       const county = kenyaCounties.find(c => c.id === profile.county_id);
       if (county) {
@@ -70,7 +82,6 @@ const Dashboard = () => {
         setNotifications(generateNotifications(county.id));
       }
     } else {
-      // Fallback to stored location
       const storedLocation = localStorage.getItem('ag_location');
       if (storedLocation) {
         const loc = JSON.parse(storedLocation);
@@ -92,7 +103,6 @@ const Dashboard = () => {
       }
     }
 
-    // Simulate real-time updates
     const interval = setInterval(() => {
       setLastUpdate(new Date());
     }, 30000);
@@ -124,13 +134,11 @@ const Dashboard = () => {
     setLastUpdate(new Date());
   }, []);
 
-  // Responsive sidebar width
-  const sidebarWidth = sidebarCollapsed ? 64 : 320;
+  // On mobile, sidebar is an overlay; on desktop, it pushes content
+  const sidebarWidth = isMobile ? 0 : (sidebarCollapsed ? 64 : 320);
 
-  // Get user's county ID
   const userCountyId = profile?.county_id || selectedCounty?.id || null;
 
-  // Real-time notifications for county admins
   useRealtimeReports({
     countyId: userCountyId,
     isCountyAdmin,
@@ -146,25 +154,74 @@ const Dashboard = () => {
         notifications={notifications}
         unreadCount={unreadCount}
         onNotificationsClick={() => setShowNotifications(true)}
+        onMenuClick={() => setMobileSidebarOpen(true)}
+        showMenuButton={isMobile}
       />
       
-      {/* Left Sidebar */}
-      <LeftSidebar
-        timeRange={timeRange}
-        onTimeRangeChange={setTimeRange}
-        rainfall={rainfall}
-        consumption={consumption}
-        onRainfallChange={setRainfall}
-        onConsumptionChange={setConsumption}
-        showWeatherOverlay={showWeatherOverlay}
-        onWeatherOverlayChange={setShowWeatherOverlay}
-        showFloodOverlay={showFloodOverlay}
-        onFloodOverlayChange={setShowFloodOverlay}
-        selectedCounty={selectedCounty}
-        nationalStats={nationalStats}
-        isCollapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-      />
+      {/* Mobile Sidebar Overlay */}
+      {isMobile && (
+        <AnimatePresence>
+          {mobileSidebarOpen && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 z-40"
+                onClick={() => setMobileSidebarOpen(false)}
+              />
+              {/* Sidebar */}
+              <motion.div
+                initial={{ x: -320 }}
+                animate={{ x: 0 }}
+                exit={{ x: -320 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="fixed left-0 top-0 h-full w-[300px] z-50 bg-card border-r border-border overflow-y-auto"
+              >
+                <div className="pt-4">
+                  <LeftSidebar
+                    timeRange={timeRange}
+                    onTimeRangeChange={setTimeRange}
+                    rainfall={rainfall}
+                    consumption={consumption}
+                    onRainfallChange={setRainfall}
+                    onConsumptionChange={setConsumption}
+                    showWeatherOverlay={showWeatherOverlay}
+                    onWeatherOverlayChange={setShowWeatherOverlay}
+                    showFloodOverlay={showFloodOverlay}
+                    onFloodOverlayChange={setShowFloodOverlay}
+                    selectedCounty={selectedCounty}
+                    nationalStats={nationalStats}
+                    isCollapsed={false}
+                    onToggleCollapse={() => setMobileSidebarOpen(false)}
+                  />
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+      )}
+
+      {/* Desktop Sidebar */}
+      {!isMobile && (
+        <LeftSidebar
+          timeRange={timeRange}
+          onTimeRangeChange={setTimeRange}
+          rainfall={rainfall}
+          consumption={consumption}
+          onRainfallChange={setRainfall}
+          onConsumptionChange={setConsumption}
+          showWeatherOverlay={showWeatherOverlay}
+          onWeatherOverlayChange={setShowWeatherOverlay}
+          showFloodOverlay={showFloodOverlay}
+          onFloodOverlayChange={setShowFloodOverlay}
+          selectedCounty={selectedCounty}
+          nationalStats={nationalStats}
+          isCollapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        />
+      )}
       
       {/* Main Content */}
       <main 
@@ -174,14 +231,15 @@ const Dashboard = () => {
           width: `calc(100% - ${sidebarWidth}px)` 
         }}
       >
-        <div className="p-4 lg:p-6">
+        <div className="p-3 sm:p-4 lg:p-6">
           {/* Action Buttons */}
-          <div className="flex gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-4">
             {user && (
               <Button
                 onClick={() => setShowReportForm(true)}
                 className="gap-2"
                 variant="hero"
+                size={isMobile ? "sm" : "default"}
               >
                 <Plus className="w-4 h-4" />
                 Submit Report
@@ -193,6 +251,7 @@ const Dashboard = () => {
                 onClick={() => setShowMyReports(true)}
                 variant="outline"
                 className="gap-2"
+                size={isMobile ? "sm" : "default"}
               >
                 <FileText className="w-4 h-4" />
                 My Reports
@@ -204,6 +263,7 @@ const Dashboard = () => {
                 onClick={() => setShowAdminDashboard(true)}
                 variant="outline"
                 className="gap-2"
+                size={isMobile ? "sm" : "default"}
               >
                 <Shield className="w-4 h-4" />
                 Admin Dashboard
@@ -215,6 +275,7 @@ const Dashboard = () => {
                 onClick={() => navigate('/auth')}
                 variant="outline"
                 className="gap-2"
+                size={isMobile ? "sm" : "default"}
               >
                 <AlertTriangle className="w-4 h-4" />
                 Sign in to submit reports
@@ -227,7 +288,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="h-[calc(100vh-12rem)] relative"
+            className="h-[calc(100vh-10rem)] sm:h-[calc(100vh-12rem)] relative"
           >
             <EnhancedKenyaMap
               counties={kenyaCounties}
@@ -240,7 +301,6 @@ const Dashboard = () => {
               simulationConsumption={consumption}
             />
             
-            {/* Report Markers Overlay */}
             <ReportMarkers countyId={userCountyId || undefined} />
           </motion.div>
         </div>
