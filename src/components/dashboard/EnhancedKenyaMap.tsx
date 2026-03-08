@@ -137,8 +137,8 @@ const EnhancedKenyaMap = ({
     };
   }, [pan, isPanning, panStart]);
 
-  const handleZoomIn = () => setZoom(prev => { const next = Math.min(MAX_ZOOM, prev * 1.4); console.log('Zoom in:', next); return next; });
-  const handleZoomOut = () => setZoom(prev => { const next = Math.max(MIN_ZOOM, prev / 1.4); console.log('Zoom out:', next); return next; });
+  const handleZoomIn = () => setZoom(prev => Math.min(MAX_ZOOM, prev * 1.4));
+  const handleZoomOut = () => setZoom(prev => Math.max(MIN_ZOOM, prev / 1.4));
   const handleReset = () => { setZoom(1); setPan({ x: 0, y: 0 }); };
 
   const viewBox = (() => {
