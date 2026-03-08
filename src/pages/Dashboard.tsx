@@ -272,15 +272,26 @@ const Dashboard = () => {
             )}
             
             {!user && (
-              <Button
-                onClick={() => navigate('/auth')}
-                variant="outline"
-                className="gap-2"
-                size={isMobile ? "sm" : "default"}
-              >
-                <AlertTriangle className="w-4 h-4" />
-                Sign in to submit reports
-              </Button>
+              <>
+                <Button
+                  onClick={() => setShowDemoForm(true)}
+                  className="gap-2"
+                  variant="hero"
+                  size={isMobile ? "sm" : "default"}
+                >
+                  <Beaker className="w-4 h-4" />
+                  Try Demo Report
+                </Button>
+                <Button
+                  onClick={() => navigate('/auth')}
+                  variant="outline"
+                  className="gap-2"
+                  size={isMobile ? "sm" : "default"}
+                >
+                  <AlertTriangle className="w-4 h-4" />
+                  Sign in to submit reports
+                </Button>
+              </>
             )}
           </div>
           
