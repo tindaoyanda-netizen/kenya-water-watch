@@ -429,14 +429,33 @@ const AdminDashboard = ({ isOpen, onClose, userCountyId }: AdminDashboardProps) 
                         </div>
                       </div>
 
-                      {/* Metadata */}
+                      {/* Location Details */}
                       <div className="space-y-2 text-sm">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Location Details</p>
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <MapPin className="w-4 h-4" />
-                          <span>{selectedReport.town_name || 'Unknown'}, {countyName}</span>
+                          <MapPin className="w-4 h-4 shrink-0" />
+                          <span>{selectedReport.town_name || 'Unknown'}, {countyName} County</span>
+                        </div>
+                        {selectedReport.sub_location && (
+                          <div className="flex items-center gap-2 text-muted-foreground pl-6">
+                            <span>Ward/Sub-location: <span className="text-foreground font-medium">{selectedReport.sub_location}</span></span>
+                          </div>
+                        )}
+                        {selectedReport.road_name && (
+                          <div className="flex items-center gap-2 text-muted-foreground pl-6">
+                            <span>Road/Street: <span className="text-foreground font-medium">{selectedReport.road_name}</span></span>
+                          </div>
+                        )}
+                        {selectedReport.landmark && (
+                          <div className="flex items-center gap-2 text-muted-foreground pl-6">
+                            <span>Landmark: <span className="text-foreground font-medium">{selectedReport.landmark}</span></span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2 text-muted-foreground pl-6">
+                          <span>GPS: {selectedReport.latitude.toFixed(4)}, {selectedReport.longitude.toFixed(4)}</span>
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <Calendar className="w-4 h-4" />
+                          <Calendar className="w-4 h-4 shrink-0" />
                           <span>{format(new Date(selectedReport.created_at), 'PPp')}</span>
                         </div>
                       </div>
