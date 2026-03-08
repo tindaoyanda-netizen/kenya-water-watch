@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { AlertTriangle, Shield, Plus, FileText, Menu, Beaker } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRealtimeReports } from '@/hooks/useRealtimeReports';
+import { useResidentNotifications } from '@/hooks/useResidentNotifications';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   CountyData, 
@@ -144,6 +145,12 @@ const Dashboard = () => {
     countyId: userCountyId,
     isCountyAdmin,
     onNewReport: handleReportSubmitted,
+  });
+
+  // Resident notifications for admin replies and status changes
+  const { unreadCount: residentUnread } = useResidentNotifications({
+    userId: user?.id || null,
+    enabled: !!user && !isCountyAdmin,
   });
 
   return (
