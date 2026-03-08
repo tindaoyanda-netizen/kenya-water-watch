@@ -12,7 +12,7 @@ import ReportMarkers from '@/components/reporting/ReportMarkers';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import MyReports from '@/components/reporting/MyReports';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Shield, Plus, FileText, Menu } from 'lucide-react';
+import { AlertTriangle, Shield, Plus, FileText, Menu, Beaker } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRealtimeReports } from '@/hooks/useRealtimeReports';
 import { useIsMobile } from '@/hooks/use-mobile';
