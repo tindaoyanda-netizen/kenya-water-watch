@@ -54,6 +54,10 @@ const ReportForm = ({ isOpen, onClose, userLocation, userCountyId, onReportSubmi
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<{ score: number; analysis: string } | null>(null);
   const [step, setStep] = useState<'form' | 'analyzing' | 'success'>('form');
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
 
   const { register, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm<ReportFormData>({
