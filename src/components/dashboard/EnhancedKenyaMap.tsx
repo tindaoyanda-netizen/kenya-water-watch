@@ -205,9 +205,10 @@ const EnhancedKenyaMap = ({
     <div ref={containerRef} className="relative bg-muted/30 rounded-2xl p-2 sm:p-4 h-full min-h-[400px] overflow-hidden touch-none">
       <svg 
         ref={svgRef}
-        viewBox={viewBox}
+        viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
         className={`w-full h-full ${isPanning ? 'cursor-grabbing' : zoom > 1 ? 'cursor-grab' : ''}`}
         preserveAspectRatio="xMidYMid meet"
+        style={transformStyle}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
