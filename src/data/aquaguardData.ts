@@ -471,6 +471,277 @@ export const kenyaCounties: CountyData[] = [
       { date: '2026-02-04', rainfall: 5, condition: 'cloudy' },
     ]}
   },
+  // === REMAINING 30 COUNTIES ===
+  {
+    id: 'kwale', name: 'Kwale', waterAvailability: 42, waterStress: 72, population: 866820, recentRainfall: 30, riskLevel: 'moderate',
+    floodRisk: { countyId: 'kwale', riskLevel: 'moderate', probability: 35, affectedAreas: ['Shimba Hills lowlands'], precautions: ['Monitor coastal rivers'] },
+    waterSources: { reservoirs: 1, rivers: 2, boreholes: 56, kiosks: 78 },
+    coordinates: { lat: -4.1816, lng: 39.4606 },
+    trend: [44, 42, 40, 38, 40, 42, 44, 42, 40, 38, 40, 42, 44, 42, 40, 38, 40, 42, 44, 42, 40, 38, 40, 42, 44, 42, 40, 38, 40, 42],
+    towns: [{ id: 'kwl-kwale', name: 'Kwale Town', countyId: 'kwale', coordinates: { lat: -4.1816, lng: 39.4606 }, population: 28252 }],
+    weather: { countyId: 'kwale', temperature: 28, humidity: 72, rainfall24h: 10, forecast: [{ date: '2026-02-02', rainfall: 12, condition: 'rain' }, { date: '2026-02-03', rainfall: 5, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'taita_taveta', name: 'Taita Taveta', waterAvailability: 40, waterStress: 65, population: 340671, recentRainfall: 25, riskLevel: 'moderate',
+    floodRisk: { countyId: 'taita_taveta', riskLevel: 'low', probability: 10, affectedAreas: ['Taveta plains'], precautions: ['Standard monitoring'] },
+    waterSources: { reservoirs: 2, rivers: 3, boreholes: 45, kiosks: 56 },
+    coordinates: { lat: -3.3961, lng: 38.3566 },
+    trend: [42, 40, 38, 36, 38, 40, 42, 40, 38, 36, 38, 40, 42, 40, 38, 36, 38, 40, 42, 40, 38, 36, 38, 40, 42, 40, 38, 36, 38, 40],
+    towns: [{ id: 'tt-wundanyi', name: 'Wundanyi', countyId: 'taita_taveta', coordinates: { lat: -3.3961, lng: 38.3566 }, population: 14768 }],
+    weather: { countyId: 'taita_taveta', temperature: 25, humidity: 55, rainfall24h: 5, forecast: [{ date: '2026-02-02', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-03', rainfall: 2, condition: 'sunny' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'lamu', name: 'Lamu', waterAvailability: 50, waterStress: 60, population: 143920, recentRainfall: 28, riskLevel: 'moderate',
+    floodRisk: { countyId: 'lamu', riskLevel: 'moderate', probability: 40, affectedAreas: ['Lamu Island lowlands'], precautions: ['Monitor tidal surges'] },
+    waterSources: { reservoirs: 0, rivers: 1, boreholes: 25, kiosks: 34 },
+    coordinates: { lat: -2.2717, lng: 40.9020 },
+    trend: [52, 50, 48, 46, 48, 50, 52, 50, 48, 46, 48, 50, 52, 50, 48, 46, 48, 50, 52, 50, 48, 46, 48, 50, 52, 50, 48, 46, 48, 50],
+    towns: [{ id: 'lmu-lamu', name: 'Lamu Town', countyId: 'lamu', coordinates: { lat: -2.2717, lng: 40.9020 }, population: 18382 }],
+    weather: { countyId: 'lamu', temperature: 29, humidity: 76, rainfall24h: 8, forecast: [{ date: '2026-02-02', rainfall: 10, condition: 'rain' }, { date: '2026-02-03', rainfall: 5, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'tana_river', name: 'Tana River', waterAvailability: 30, waterStress: 80, population: 315943, recentRainfall: 12, riskLevel: 'severe',
+    floodRisk: { countyId: 'tana_river', riskLevel: 'high', probability: 60, affectedAreas: ['Tana Delta', 'Hola town'], precautions: ['Evacuate flood plains', 'Monitor river levels'] },
+    waterSources: { reservoirs: 0, rivers: 2, boreholes: 35, kiosks: 45 },
+    coordinates: { lat: -1.5019, lng: 39.9884 },
+    trend: [32, 30, 28, 26, 28, 30, 32, 30, 28, 26, 28, 30, 32, 30, 28, 26, 28, 30, 32, 30, 28, 26, 28, 30, 32, 30, 28, 26, 28, 30],
+    towns: [{ id: 'tr-hola', name: 'Hola', countyId: 'tana_river', coordinates: { lat: -1.5019, lng: 39.9884 }, population: 6931 }],
+    weather: { countyId: 'tana_river', temperature: 32, humidity: 45, rainfall24h: 3, forecast: [{ date: '2026-02-02', rainfall: 5, condition: 'cloudy' }, { date: '2026-02-03', rainfall: 0, condition: 'sunny' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'marsabit', name: 'Marsabit', waterAvailability: 20, waterStress: 90, population: 459785, recentRainfall: 6, riskLevel: 'severe',
+    floodRisk: { countyId: 'marsabit', riskLevel: 'low', probability: 5, affectedAreas: [], precautions: ['Focus on drought preparedness'] },
+    waterSources: { reservoirs: 0, rivers: 0, boreholes: 28, kiosks: 35 },
+    coordinates: { lat: 2.3284, lng: 37.9900 },
+    trend: [22, 20, 18, 16, 18, 20, 22, 20, 18, 16, 18, 20, 22, 20, 18, 16, 18, 20, 22, 20, 18, 16, 18, 20, 22, 20, 18, 16, 18, 20],
+    towns: [{ id: 'msb-marsabit', name: 'Marsabit Town', countyId: 'marsabit', coordinates: { lat: 2.3284, lng: 37.9900 }, population: 19739 }],
+    weather: { countyId: 'marsabit', temperature: 30, humidity: 30, rainfall24h: 0, forecast: [{ date: '2026-02-02', rainfall: 0, condition: 'sunny' }, { date: '2026-02-03', rainfall: 0, condition: 'sunny' }, { date: '2026-02-04', rainfall: 2, condition: 'cloudy' }] }
+  },
+  {
+    id: 'isiolo', name: 'Isiolo', waterAvailability: 28, waterStress: 82, population: 268002, recentRainfall: 10, riskLevel: 'severe',
+    floodRisk: { countyId: 'isiolo', riskLevel: 'low', probability: 8, affectedAreas: [], precautions: ['Water conservation priority'] },
+    waterSources: { reservoirs: 0, rivers: 1, boreholes: 32, kiosks: 40 },
+    coordinates: { lat: 0.3546, lng: 37.5822 },
+    trend: [30, 28, 26, 24, 26, 28, 30, 28, 26, 24, 26, 28, 30, 28, 26, 24, 26, 28, 30, 28, 26, 24, 26, 28, 30, 28, 26, 24, 26, 28],
+    towns: [{ id: 'isl-isiolo', name: 'Isiolo Town', countyId: 'isiolo', coordinates: { lat: 0.3546, lng: 37.5822 }, population: 45989 }],
+    weather: { countyId: 'isiolo', temperature: 31, humidity: 32, rainfall24h: 0, forecast: [{ date: '2026-02-02', rainfall: 0, condition: 'sunny' }, { date: '2026-02-03', rainfall: 0, condition: 'sunny' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'embu', name: 'Embu', waterAvailability: 74, waterStress: 45, population: 608599, recentRainfall: 60, riskLevel: 'stable',
+    floodRisk: { countyId: 'embu', riskLevel: 'low', probability: 15, affectedAreas: ['Rupingazi River basin'], precautions: ['Monitor Mt. Kenya runoff'] },
+    waterSources: { reservoirs: 3, rivers: 4, boreholes: 78, kiosks: 112 },
+    coordinates: { lat: -0.5389, lng: 37.4596 },
+    trend: [72, 74, 76, 74, 72, 70, 72, 74, 76, 74, 72, 70, 72, 74, 76, 74, 72, 70, 72, 74, 76, 74, 72, 70, 72, 74, 76, 74, 72, 74],
+    towns: [{ id: 'emb-embu', name: 'Embu Town', countyId: 'embu', coordinates: { lat: -0.5389, lng: 37.4596 }, population: 60673 }],
+    weather: { countyId: 'embu', temperature: 21, humidity: 65, rainfall24h: 14, forecast: [{ date: '2026-02-02', rainfall: 12, condition: 'rain' }, { date: '2026-02-03', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 3, condition: 'cloudy' }] }
+  },
+  {
+    id: 'tharaka_nithi', name: 'Tharaka Nithi', waterAvailability: 62, waterStress: 50, population: 393177, recentRainfall: 48, riskLevel: 'moderate',
+    floodRisk: { countyId: 'tharaka_nithi', riskLevel: 'low', probability: 12, affectedAreas: ['Tharaka lowlands'], precautions: ['Standard monitoring'] },
+    waterSources: { reservoirs: 2, rivers: 3, boreholes: 56, kiosks: 78 },
+    coordinates: { lat: -0.3044, lng: 37.8497 },
+    trend: [60, 62, 64, 62, 60, 58, 60, 62, 64, 62, 60, 58, 60, 62, 64, 62, 60, 58, 60, 62, 64, 62, 60, 58, 60, 62, 64, 62, 60, 62],
+    towns: [{ id: 'tn-chuka', name: 'Chuka', countyId: 'tharaka_nithi', coordinates: { lat: -0.3322, lng: 37.6483 }, population: 18239 }],
+    weather: { countyId: 'tharaka_nithi', temperature: 22, humidity: 60, rainfall24h: 10, forecast: [{ date: '2026-02-02', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-03', rainfall: 5, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'kitui', name: 'Kitui', waterAvailability: 32, waterStress: 78, population: 1136187, recentRainfall: 18, riskLevel: 'severe',
+    floodRisk: { countyId: 'kitui', riskLevel: 'low', probability: 10, affectedAreas: ['Athi River basin'], precautions: ['Conserve water supplies'] },
+    waterSources: { reservoirs: 1, rivers: 2, boreholes: 68, kiosks: 90 },
+    coordinates: { lat: -1.3667, lng: 38.0106 },
+    trend: [34, 32, 30, 28, 30, 32, 34, 32, 30, 28, 30, 32, 34, 32, 30, 28, 30, 32, 34, 32, 30, 28, 30, 32, 34, 32, 30, 28, 30, 32],
+    towns: [{ id: 'ktu-kitui', name: 'Kitui Town', countyId: 'kitui', coordinates: { lat: -1.3667, lng: 38.0106 }, population: 109568 }],
+    weather: { countyId: 'kitui', temperature: 28, humidity: 42, rainfall24h: 2, forecast: [{ date: '2026-02-02', rainfall: 0, condition: 'sunny' }, { date: '2026-02-03', rainfall: 0, condition: 'sunny' }, { date: '2026-02-04', rainfall: 5, condition: 'cloudy' }] }
+  },
+  {
+    id: 'makueni', name: 'Makueni', waterAvailability: 35, waterStress: 74, population: 987653, recentRainfall: 20, riskLevel: 'severe',
+    floodRisk: { countyId: 'makueni', riskLevel: 'low', probability: 12, affectedAreas: ['Athi River lowlands'], precautions: ['Sand dam maintenance'] },
+    waterSources: { reservoirs: 2, rivers: 2, boreholes: 72, kiosks: 95 },
+    coordinates: { lat: -1.8039, lng: 37.6200 },
+    trend: [37, 35, 33, 31, 33, 35, 37, 35, 33, 31, 33, 35, 37, 35, 33, 31, 33, 35, 37, 35, 33, 31, 33, 35, 37, 35, 33, 31, 33, 35],
+    towns: [{ id: 'mkn-wote', name: 'Wote', countyId: 'makueni', coordinates: { lat: -1.7833, lng: 37.6333 }, population: 56419 }],
+    weather: { countyId: 'makueni', temperature: 27, humidity: 45, rainfall24h: 3, forecast: [{ date: '2026-02-02', rainfall: 2, condition: 'sunny' }, { date: '2026-02-03', rainfall: 0, condition: 'sunny' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'nyandarua', name: 'Nyandarua', waterAvailability: 78, waterStress: 38, population: 638289, recentRainfall: 72, riskLevel: 'stable',
+    floodRisk: { countyId: 'nyandarua', riskLevel: 'low', probability: 15, affectedAreas: ['Kinangop plains'], precautions: ['Standard monitoring'] },
+    waterSources: { reservoirs: 4, rivers: 5, boreholes: 85, kiosks: 120 },
+    coordinates: { lat: -0.1804, lng: 36.5232 },
+    trend: [76, 78, 80, 78, 76, 74, 76, 78, 80, 78, 76, 74, 76, 78, 80, 78, 76, 74, 76, 78, 80, 78, 76, 74, 76, 78, 80, 78, 76, 78],
+    towns: [{ id: 'nyd-olkalou', name: 'Ol Kalou', countyId: 'nyandarua', coordinates: { lat: -0.2667, lng: 36.3833 }, population: 39622 }],
+    weather: { countyId: 'nyandarua', temperature: 16, humidity: 72, rainfall24h: 18, forecast: [{ date: '2026-02-02', rainfall: 15, condition: 'rain' }, { date: '2026-02-03', rainfall: 10, condition: 'rain' }, { date: '2026-02-04', rainfall: 5, condition: 'cloudy' }] }
+  },
+  {
+    id: 'muranga', name: "Murang'a", waterAvailability: 76, waterStress: 40, population: 1056640, recentRainfall: 68, riskLevel: 'stable',
+    floodRisk: { countyId: 'muranga', riskLevel: 'low', probability: 18, affectedAreas: ['Mathioya River basin'], precautions: ['Monitor highland runoff'] },
+    waterSources: { reservoirs: 4, rivers: 5, boreholes: 95, kiosks: 145 },
+    coordinates: { lat: -0.7210, lng: 37.1526 },
+    trend: [74, 76, 78, 76, 74, 72, 74, 76, 78, 76, 74, 72, 74, 76, 78, 76, 74, 72, 74, 76, 78, 76, 74, 72, 74, 76, 78, 76, 74, 76],
+    towns: [{ id: 'mrg-muranga', name: "Murang'a Town", countyId: 'muranga', coordinates: { lat: -0.7210, lng: 37.1526 }, population: 305424 }],
+    weather: { countyId: 'muranga', temperature: 20, humidity: 68, rainfall24h: 16, forecast: [{ date: '2026-02-02', rainfall: 14, condition: 'rain' }, { date: '2026-02-03', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 4, condition: 'cloudy' }] }
+  },
+  {
+    id: 'kirinyaga', name: 'Kirinyaga', waterAvailability: 80, waterStress: 35, population: 610411, recentRainfall: 70, riskLevel: 'stable',
+    floodRisk: { countyId: 'kirinyaga', riskLevel: 'low', probability: 15, affectedAreas: ['Mwea irrigation scheme'], precautions: ['Monitor canal levels'] },
+    waterSources: { reservoirs: 5, rivers: 4, boreholes: 72, kiosks: 105 },
+    coordinates: { lat: -0.4989, lng: 37.2803 },
+    trend: [78, 80, 82, 80, 78, 76, 78, 80, 82, 80, 78, 76, 78, 80, 82, 80, 78, 76, 78, 80, 82, 80, 78, 76, 78, 80, 82, 80, 78, 80],
+    towns: [{ id: 'kry-kerugoya', name: 'Kerugoya', countyId: 'kirinyaga', coordinates: { lat: -0.4989, lng: 37.2803 }, population: 24316 }],
+    weather: { countyId: 'kirinyaga', temperature: 21, humidity: 66, rainfall24h: 15, forecast: [{ date: '2026-02-02', rainfall: 12, condition: 'rain' }, { date: '2026-02-03', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 3, condition: 'cloudy' }] }
+  },
+  {
+    id: 'laikipia', name: 'Laikipia', waterAvailability: 55, waterStress: 58, population: 518560, recentRainfall: 40, riskLevel: 'moderate',
+    floodRisk: { countyId: 'laikipia', riskLevel: 'low', probability: 10, affectedAreas: ['Ewaso Nyiro basin'], precautions: ['Wildlife corridor water points'] },
+    waterSources: { reservoirs: 2, rivers: 3, boreholes: 65, kiosks: 85 },
+    coordinates: { lat: 0.0600, lng: 36.7800 },
+    trend: [53, 55, 57, 55, 53, 51, 53, 55, 57, 55, 53, 51, 53, 55, 57, 55, 53, 51, 53, 55, 57, 55, 53, 51, 53, 55, 57, 55, 53, 55],
+    towns: [{ id: 'lkp-nanyuki', name: 'Nanyuki', countyId: 'laikipia', coordinates: { lat: 0.0167, lng: 37.0667 }, population: 47679 }],
+    weather: { countyId: 'laikipia', temperature: 22, humidity: 55, rainfall24h: 8, forecast: [{ date: '2026-02-02', rainfall: 6, condition: 'cloudy' }, { date: '2026-02-03', rainfall: 3, condition: 'sunny' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'samburu', name: 'Samburu', waterAvailability: 24, waterStress: 88, population: 310327, recentRainfall: 8, riskLevel: 'severe',
+    floodRisk: { countyId: 'samburu', riskLevel: 'low', probability: 5, affectedAreas: [], precautions: ['Drought preparedness'] },
+    waterSources: { reservoirs: 0, rivers: 1, boreholes: 28, kiosks: 35 },
+    coordinates: { lat: 1.2667, lng: 36.9000 },
+    trend: [26, 24, 22, 20, 22, 24, 26, 24, 22, 20, 22, 24, 26, 24, 22, 20, 22, 24, 26, 24, 22, 20, 22, 24, 26, 24, 22, 20, 22, 24],
+    towns: [{ id: 'smb-maralal', name: 'Maralal', countyId: 'samburu', coordinates: { lat: 1.1000, lng: 36.7000 }, population: 20606 }],
+    weather: { countyId: 'samburu', temperature: 30, humidity: 28, rainfall24h: 0, forecast: [{ date: '2026-02-02', rainfall: 0, condition: 'sunny' }, { date: '2026-02-03', rainfall: 0, condition: 'sunny' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'trans_nzoia', name: 'Trans Nzoia', waterAvailability: 80, waterStress: 38, population: 990341, recentRainfall: 75, riskLevel: 'stable',
+    floodRisk: { countyId: 'trans_nzoia', riskLevel: 'moderate', probability: 35, affectedAreas: ['Kitale lowlands'], precautions: ['Monitor Nzoia River'] },
+    waterSources: { reservoirs: 4, rivers: 5, boreholes: 95, kiosks: 140 },
+    coordinates: { lat: 1.0567, lng: 34.9507 },
+    trend: [78, 80, 82, 80, 78, 76, 78, 80, 82, 80, 78, 76, 78, 80, 82, 80, 78, 76, 78, 80, 82, 80, 78, 76, 78, 80, 82, 80, 78, 80],
+    towns: [{ id: 'tnz-kitale', name: 'Kitale', countyId: 'trans_nzoia', coordinates: { lat: 1.0187, lng: 35.0020 }, population: 106187 }],
+    weather: { countyId: 'trans_nzoia', temperature: 22, humidity: 70, rainfall24h: 20, forecast: [{ date: '2026-02-02', rainfall: 18, condition: 'rain' }, { date: '2026-02-03', rainfall: 12, condition: 'rain' }, { date: '2026-02-04', rainfall: 5, condition: 'cloudy' }] }
+  },
+  {
+    id: 'baringo', name: 'Baringo', waterAvailability: 45, waterStress: 62, population: 666763, recentRainfall: 35, riskLevel: 'moderate',
+    floodRisk: { countyId: 'baringo', riskLevel: 'moderate', probability: 30, affectedAreas: ['Lake Baringo shores', 'Marigat'], precautions: ['Monitor lake levels'] },
+    waterSources: { reservoirs: 2, rivers: 3, boreholes: 55, kiosks: 75 },
+    coordinates: { lat: 0.4667, lng: 35.9667 },
+    trend: [43, 45, 47, 45, 43, 41, 43, 45, 47, 45, 43, 41, 43, 45, 47, 45, 43, 41, 43, 45, 47, 45, 43, 41, 43, 45, 47, 45, 43, 45],
+    towns: [{ id: 'brg-kabarnet', name: 'Kabarnet', countyId: 'baringo', coordinates: { lat: 0.4918, lng: 35.7430 }, population: 26057 }],
+    weather: { countyId: 'baringo', temperature: 26, humidity: 50, rainfall24h: 6, forecast: [{ date: '2026-02-02', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-03', rainfall: 3, condition: 'sunny' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'elgeyo_marakwet', name: 'Elgeyo Marakwet', waterAvailability: 72, waterStress: 42, population: 454480, recentRainfall: 62, riskLevel: 'stable',
+    floodRisk: { countyId: 'elgeyo_marakwet', riskLevel: 'moderate', probability: 28, affectedAreas: ['Kerio Valley'], precautions: ['Monitor Kerio River'] },
+    waterSources: { reservoirs: 3, rivers: 4, boreholes: 58, kiosks: 80 },
+    coordinates: { lat: 0.6833, lng: 35.5167 },
+    trend: [70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 72],
+    towns: [{ id: 'em-iten', name: 'Iten', countyId: 'elgeyo_marakwet', coordinates: { lat: 0.6667, lng: 35.5000 }, population: 22855 }],
+    weather: { countyId: 'elgeyo_marakwet', temperature: 18, humidity: 65, rainfall24h: 15, forecast: [{ date: '2026-02-02', rainfall: 12, condition: 'rain' }, { date: '2026-02-03', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 3, condition: 'cloudy' }] }
+  },
+  {
+    id: 'nandi', name: 'Nandi', waterAvailability: 76, waterStress: 40, population: 885711, recentRainfall: 68, riskLevel: 'stable',
+    floodRisk: { countyId: 'nandi', riskLevel: 'low', probability: 15, affectedAreas: ['Nandi Hills lowlands'], precautions: ['Standard monitoring'] },
+    waterSources: { reservoirs: 3, rivers: 4, boreholes: 78, kiosks: 110 },
+    coordinates: { lat: 0.1833, lng: 35.1500 },
+    trend: [74, 76, 78, 76, 74, 72, 74, 76, 78, 76, 74, 72, 74, 76, 78, 76, 74, 72, 74, 76, 78, 76, 74, 72, 74, 76, 78, 76, 74, 76],
+    towns: [{ id: 'nnd-kapsabet', name: 'Kapsabet', countyId: 'nandi', coordinates: { lat: 0.2000, lng: 35.1000 }, population: 86803 }],
+    weather: { countyId: 'nandi', temperature: 20, humidity: 68, rainfall24h: 16, forecast: [{ date: '2026-02-02', rainfall: 14, condition: 'rain' }, { date: '2026-02-03', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 3, condition: 'cloudy' }] }
+  },
+  {
+    id: 'west_pokot', name: 'West Pokot', waterAvailability: 35, waterStress: 72, population: 621241, recentRainfall: 25, riskLevel: 'severe',
+    floodRisk: { countyId: 'west_pokot', riskLevel: 'moderate', probability: 30, affectedAreas: ['Wei Wei Valley'], precautions: ['Landslide awareness', 'Monitor rivers'] },
+    waterSources: { reservoirs: 1, rivers: 2, boreholes: 35, kiosks: 50 },
+    coordinates: { lat: 1.6167, lng: 35.2333 },
+    trend: [37, 35, 33, 31, 33, 35, 37, 35, 33, 31, 33, 35, 37, 35, 33, 31, 33, 35, 37, 35, 33, 31, 33, 35, 37, 35, 33, 31, 33, 35],
+    towns: [{ id: 'wp-kapenguria', name: 'Kapenguria', countyId: 'west_pokot', coordinates: { lat: 1.2389, lng: 35.1117 }, population: 25274 }],
+    weather: { countyId: 'west_pokot', temperature: 24, humidity: 50, rainfall24h: 5, forecast: [{ date: '2026-02-02', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-03', rainfall: 3, condition: 'sunny' }, { date: '2026-02-04', rainfall: 0, condition: 'sunny' }] }
+  },
+  {
+    id: 'kericho', name: 'Kericho', waterAvailability: 82, waterStress: 32, population: 901777, recentRainfall: 80, riskLevel: 'stable',
+    floodRisk: { countyId: 'kericho', riskLevel: 'low', probability: 12, affectedAreas: ['Tea plantation valleys'], precautions: ['Standard monitoring'] },
+    waterSources: { reservoirs: 4, rivers: 5, boreholes: 85, kiosks: 125 },
+    coordinates: { lat: -0.3689, lng: 35.2863 },
+    trend: [80, 82, 84, 82, 80, 78, 80, 82, 84, 82, 80, 78, 80, 82, 84, 82, 80, 78, 80, 82, 84, 82, 80, 78, 80, 82, 84, 82, 80, 82],
+    towns: [{ id: 'krc-kericho', name: 'Kericho Town', countyId: 'kericho', coordinates: { lat: -0.3689, lng: 35.2863 }, population: 150817 }],
+    weather: { countyId: 'kericho', temperature: 19, humidity: 75, rainfall24h: 22, forecast: [{ date: '2026-02-02', rainfall: 20, condition: 'rain' }, { date: '2026-02-03', rainfall: 15, condition: 'rain' }, { date: '2026-02-04', rainfall: 8, condition: 'cloudy' }] }
+  },
+  {
+    id: 'bomet', name: 'Bomet', waterAvailability: 70, waterStress: 45, population: 875689, recentRainfall: 62, riskLevel: 'moderate',
+    floodRisk: { countyId: 'bomet', riskLevel: 'low', probability: 15, affectedAreas: ['Sotik lowlands'], precautions: ['Standard monitoring'] },
+    waterSources: { reservoirs: 3, rivers: 4, boreholes: 72, kiosks: 100 },
+    coordinates: { lat: -0.7813, lng: 35.3419 },
+    trend: [68, 70, 72, 70, 68, 66, 68, 70, 72, 70, 68, 66, 68, 70, 72, 70, 68, 66, 68, 70, 72, 70, 68, 66, 68, 70, 72, 70, 68, 70],
+    towns: [{ id: 'bmt-bomet', name: 'Bomet Town', countyId: 'bomet', coordinates: { lat: -0.7813, lng: 35.3419 }, population: 27135 }],
+    weather: { countyId: 'bomet', temperature: 20, humidity: 68, rainfall24h: 14, forecast: [{ date: '2026-02-02', rainfall: 12, condition: 'rain' }, { date: '2026-02-03', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 3, condition: 'cloudy' }] }
+  },
+  {
+    id: 'bungoma', name: 'Bungoma', waterAvailability: 75, waterStress: 42, population: 1670570, recentRainfall: 72, riskLevel: 'stable',
+    floodRisk: { countyId: 'bungoma', riskLevel: 'moderate', probability: 35, affectedAreas: ['Nzoia River basin'], precautions: ['Monitor river levels', 'Avoid flood plains'] },
+    waterSources: { reservoirs: 4, rivers: 5, boreholes: 98, kiosks: 145 },
+    coordinates: { lat: 0.5635, lng: 34.5607 },
+    trend: [73, 75, 77, 75, 73, 71, 73, 75, 77, 75, 73, 71, 73, 75, 77, 75, 73, 71, 73, 75, 77, 75, 73, 71, 73, 75, 77, 75, 73, 75],
+    towns: [{ id: 'bgm-bungoma', name: 'Bungoma Town', countyId: 'bungoma', coordinates: { lat: 0.5635, lng: 34.5607 }, population: 73527 }],
+    weather: { countyId: 'bungoma', temperature: 23, humidity: 72, rainfall24h: 18, forecast: [{ date: '2026-02-02', rainfall: 20, condition: 'rain' }, { date: '2026-02-03', rainfall: 12, condition: 'rain' }, { date: '2026-02-04', rainfall: 5, condition: 'cloudy' }] }
+  },
+  {
+    id: 'busia', name: 'Busia', waterAvailability: 72, waterStress: 45, population: 893681, recentRainfall: 68, riskLevel: 'moderate',
+    floodRisk: { countyId: 'busia', riskLevel: 'high', probability: 55, affectedAreas: ['Budalangi', 'Nzoia River delta'], precautions: ['Evacuate Budalangi during floods', 'Stock emergency supplies'] },
+    waterSources: { reservoirs: 2, rivers: 4, boreholes: 68, kiosks: 95 },
+    coordinates: { lat: 0.4608, lng: 34.1108 },
+    trend: [70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 72],
+    towns: [{ id: 'bsa-busia', name: 'Busia Town', countyId: 'busia', coordinates: { lat: 0.4608, lng: 34.1108 }, population: 52105 }],
+    weather: { countyId: 'busia', temperature: 25, humidity: 74, rainfall24h: 16, forecast: [{ date: '2026-02-02', rainfall: 18, condition: 'rain' }, { date: '2026-02-03', rainfall: 12, condition: 'rain' }, { date: '2026-02-04', rainfall: 5, condition: 'cloudy' }] }
+  },
+  {
+    id: 'vihiga', name: 'Vihiga', waterAvailability: 70, waterStress: 48, population: 590013, recentRainfall: 72, riskLevel: 'moderate',
+    floodRisk: { countyId: 'vihiga', riskLevel: 'moderate', probability: 30, affectedAreas: ['Maragoli lowlands'], precautions: ['Drain farmland channels'] },
+    waterSources: { reservoirs: 2, rivers: 3, boreholes: 55, kiosks: 78 },
+    coordinates: { lat: 0.0833, lng: 34.7333 },
+    trend: [68, 70, 72, 70, 68, 66, 68, 70, 72, 70, 68, 66, 68, 70, 72, 70, 68, 66, 68, 70, 72, 70, 68, 66, 68, 70, 72, 70, 68, 70],
+    towns: [{ id: 'vhg-mbale', name: 'Mbale', countyId: 'vihiga', coordinates: { lat: 0.0833, lng: 34.7333 }, population: 91616 }],
+    weather: { countyId: 'vihiga', temperature: 22, humidity: 72, rainfall24h: 18, forecast: [{ date: '2026-02-02', rainfall: 16, condition: 'rain' }, { date: '2026-02-03', rainfall: 10, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 4, condition: 'cloudy' }] }
+  },
+  {
+    id: 'homa_bay', name: 'Homa Bay', waterAvailability: 65, waterStress: 50, population: 1131950, recentRainfall: 60, riskLevel: 'moderate',
+    floodRisk: { countyId: 'homa_bay', riskLevel: 'moderate', probability: 35, affectedAreas: ['Lake Victoria shores', 'Homa Bay town'], precautions: ['Monitor lake levels'] },
+    waterSources: { reservoirs: 2, rivers: 3, boreholes: 65, kiosks: 90 },
+    coordinates: { lat: -0.5273, lng: 34.4571 },
+    trend: [63, 65, 67, 65, 63, 61, 63, 65, 67, 65, 63, 61, 63, 65, 67, 65, 63, 61, 63, 65, 67, 65, 63, 61, 63, 65, 67, 65, 63, 65],
+    towns: [{ id: 'hb-homabay', name: 'Homa Bay Town', countyId: 'homa_bay', coordinates: { lat: -0.5273, lng: 34.4571 }, population: 55532 }],
+    weather: { countyId: 'homa_bay', temperature: 26, humidity: 70, rainfall24h: 14, forecast: [{ date: '2026-02-02', rainfall: 16, condition: 'rain' }, { date: '2026-02-03', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 3, condition: 'cloudy' }] }
+  },
+  {
+    id: 'migori', name: 'Migori', waterAvailability: 62, waterStress: 52, population: 1116436, recentRainfall: 58, riskLevel: 'moderate',
+    floodRisk: { countyId: 'migori', riskLevel: 'moderate', probability: 32, affectedAreas: ['Migori River basin'], precautions: ['Monitor river crossings'] },
+    waterSources: { reservoirs: 2, rivers: 4, boreholes: 62, kiosks: 85 },
+    coordinates: { lat: -1.0634, lng: 34.4731 },
+    trend: [60, 62, 64, 62, 60, 58, 60, 62, 64, 62, 60, 58, 60, 62, 64, 62, 60, 58, 60, 62, 64, 62, 60, 58, 60, 62, 64, 62, 60, 62],
+    towns: [{ id: 'mgr-migori', name: 'Migori Town', countyId: 'migori', coordinates: { lat: -1.0634, lng: 34.4731 }, population: 66730 }],
+    weather: { countyId: 'migori', temperature: 25, humidity: 68, rainfall24h: 12, forecast: [{ date: '2026-02-02', rainfall: 14, condition: 'rain' }, { date: '2026-02-03', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 3, condition: 'cloudy' }] }
+  },
+  {
+    id: 'kisii', name: 'Kisii', waterAvailability: 74, waterStress: 42, population: 1266860, recentRainfall: 72, riskLevel: 'stable',
+    floodRisk: { countyId: 'kisii', riskLevel: 'low', probability: 15, affectedAreas: ['Gucha River basin'], precautions: ['Standard monitoring'] },
+    waterSources: { reservoirs: 3, rivers: 4, boreholes: 82, kiosks: 120 },
+    coordinates: { lat: -0.6817, lng: 34.7667 },
+    trend: [72, 74, 76, 74, 72, 70, 72, 74, 76, 74, 72, 70, 72, 74, 76, 74, 72, 70, 72, 74, 76, 74, 72, 70, 72, 74, 76, 74, 72, 74],
+    towns: [{ id: 'ksi-kisii', name: 'Kisii Town', countyId: 'kisii', coordinates: { lat: -0.6817, lng: 34.7667 }, population: 112417 }],
+    weather: { countyId: 'kisii', temperature: 21, humidity: 72, rainfall24h: 18, forecast: [{ date: '2026-02-02', rainfall: 16, condition: 'rain' }, { date: '2026-02-03', rainfall: 10, condition: 'rain' }, { date: '2026-02-04', rainfall: 5, condition: 'cloudy' }] }
+  },
+  {
+    id: 'nyamira', name: 'Nyamira', waterAvailability: 72, waterStress: 44, population: 605576, recentRainfall: 70, riskLevel: 'stable',
+    floodRisk: { countyId: 'nyamira', riskLevel: 'low', probability: 12, affectedAreas: ['Sondu River basin'], precautions: ['Standard monitoring'] },
+    waterSources: { reservoirs: 2, rivers: 3, boreholes: 58, kiosks: 82 },
+    coordinates: { lat: -0.5633, lng: 34.9333 },
+    trend: [70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 68, 70, 72, 74, 72, 70, 72],
+    towns: [{ id: 'nym-nyamira', name: 'Nyamira Town', countyId: 'nyamira', coordinates: { lat: -0.5633, lng: 34.9333 }, population: 36895 }],
+    weather: { countyId: 'nyamira', temperature: 20, humidity: 70, rainfall24h: 16, forecast: [{ date: '2026-02-02', rainfall: 14, condition: 'rain' }, { date: '2026-02-03', rainfall: 8, condition: 'cloudy' }, { date: '2026-02-04', rainfall: 4, condition: 'cloudy' }] }
+  },
+  {
+    id: 'narok', name: 'Narok', waterAvailability: 50, waterStress: 58, population: 1157873, recentRainfall: 42, riskLevel: 'moderate',
+    floodRisk: { countyId: 'narok', riskLevel: 'moderate', probability: 28, affectedAreas: ['Mara River basin', 'Narok Town'], precautions: ['Monitor Mara River', 'Avoid low crossings'] },
+    waterSources: { reservoirs: 2, rivers: 4, boreholes: 65, kiosks: 88 },
+    coordinates: { lat: -1.0873, lng: 35.8600 },
+    trend: [48, 50, 52, 50, 48, 46, 48, 50, 52, 50, 48, 46, 48, 50, 52, 50, 48, 46, 48, 50, 52, 50, 48, 46, 48, 50, 52, 50, 48, 50],
+    towns: [{ id: 'nrk-narok', name: 'Narok Town', countyId: 'narok', coordinates: { lat: -1.0873, lng: 35.8600 }, population: 68789 }],
+    weather: { countyId: 'narok', temperature: 22, humidity: 55, rainfall24h: 8, forecast: [{ date: '2026-02-02', rainfall: 10, condition: 'cloudy' }, { date: '2026-02-03', rainfall: 5, condition: 'sunny' }, { date: '2026-02-04', rainfall: 2, condition: 'sunny' }] }
+  },
 ];
 
 // Generate sample notifications
