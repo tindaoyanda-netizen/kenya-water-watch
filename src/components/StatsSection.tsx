@@ -12,13 +12,10 @@ const StatsSection = () => {
   ];
 
   return (
-    <section className="py-16 lg:py-24 bg-gradient-to-br from-primary via-primary to-water-dark relative overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border border-white" />
-        <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border border-white" />
-        <div className="absolute top-1/2 left-1/4 w-24 h-24 rounded-full border border-white" />
-      </div>
+    <section className="py-20 lg:py-28 bg-secondary relative overflow-hidden">
+      {/* Decorative orbs */}
+      <div className="absolute top-0 left-1/4 w-64 h-64 rounded-full bg-primary/8 blur-3xl" />
+      <div className="absolute bottom-0 right-1/4 w-48 h-48 rounded-full bg-accent/8 blur-3xl" />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <motion.div
@@ -26,7 +23,7 @@ const StatsSection = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12"
         >
           {statItems.map((stat, index) => (
             <motion.div
@@ -34,14 +31,14 @@ const StatsSection = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
               className="text-center"
             >
-              <div className="text-4xl sm:text-5xl font-heading font-bold text-white mb-2">
+              <div className="text-4xl sm:text-5xl font-heading font-bold text-secondary-foreground mb-2 tracking-tight">
                 {stat.value}
               </div>
-              <div className="text-white/90 font-medium mb-1">{stat.label}</div>
-              <div className="text-white/60 text-sm">{stat.subtext}</div>
+              <div className="text-secondary-foreground/80 font-medium mb-1 text-sm">{stat.label}</div>
+              <div className="text-secondary-foreground/50 text-xs">{stat.subtext}</div>
             </motion.div>
           ))}
         </motion.div>

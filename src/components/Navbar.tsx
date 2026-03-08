@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Droplets, Menu, X } from 'lucide-react';
+import { Waves, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -11,37 +11,36 @@ const Navbar = () => {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isHome ? 'bg-transparent' : 'bg-card/90 backdrop-blur-lg border-b border-border'
+      isHome ? 'bg-transparent' : 'bg-card/80 backdrop-blur-xl border-b border-border/50'
     }`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2.5 group">
             <div className="relative">
-              <Droplets className={`w-8 h-8 transition-colors ${isHome ? 'text-white' : 'text-primary'}`} />
-              <div className="absolute inset-0 bg-accent/30 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              <Waves className={`w-7 h-7 transition-colors ${isHome ? 'text-accent' : 'text-primary'}`} />
             </div>
-            <span className={`font-heading font-bold text-xl ${isHome ? 'text-white' : 'text-foreground'}`}>
-              AquaGuard Kenya
+            <span className={`font-heading font-bold text-lg tracking-tight ${isHome ? 'text-primary-foreground' : 'text-foreground'}`}>
+              AquaGuard
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-8">
             <Link 
               to="/" 
-              className={`font-medium transition-colors ${isHome ? 'text-white/80 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
+              className={`text-sm font-medium transition-colors ${isHome ? 'text-primary-foreground/70 hover:text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
             >
               Home
             </Link>
             <Link 
               to="/dashboard" 
-              className={`font-medium transition-colors ${isHome ? 'text-white/80 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
+              className={`text-sm font-medium transition-colors ${isHome ? 'text-primary-foreground/70 hover:text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
             >
               Dashboard
             </Link>
             <Link to="/auth">
-              <Button variant={isHome ? 'glass' : 'default'} size="lg">
+              <Button variant={isHome ? 'glass' : 'default'} size="default">
                 Get Started
               </Button>
             </Link>
@@ -49,13 +48,13 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <button 
-            className="md:hidden p-2"
+            className="md:hidden p-2 rounded-lg hover:bg-muted/20 transition-colors"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? (
-              <X className={`w-6 h-6 ${isHome ? 'text-white' : 'text-foreground'}`} />
+              <X className={`w-5 h-5 ${isHome ? 'text-primary-foreground' : 'text-foreground'}`} />
             ) : (
-              <Menu className={`w-6 h-6 ${isHome ? 'text-white' : 'text-foreground'}`} />
+              <Menu className={`w-5 h-5 ${isHome ? 'text-primary-foreground' : 'text-foreground'}`} />
             )}
           </button>
         </div>
@@ -68,20 +67,20 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-card/95 backdrop-blur-lg border-b border-border"
+            className="md:hidden bg-card/95 backdrop-blur-xl border-b border-border/50"
           >
-            <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
+            <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
               <Link 
                 to="/" 
                 onClick={() => setIsOpen(false)}
-                className="font-medium text-foreground py-2"
+                className="font-medium text-foreground py-2.5 px-3 rounded-lg hover:bg-muted/50 transition-colors"
               >
                 Home
               </Link>
               <Link 
                 to="/dashboard" 
                 onClick={() => setIsOpen(false)}
-                className="font-medium text-foreground py-2"
+                className="font-medium text-foreground py-2.5 px-3 rounded-lg hover:bg-muted/50 transition-colors"
               >
                 Dashboard
               </Link>
