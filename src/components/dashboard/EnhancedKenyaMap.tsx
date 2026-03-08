@@ -2,8 +2,9 @@ import { useRef, useState, useCallback, useEffect, WheelEvent, MouseEvent } from
 import { CountyData, WaterSource, waterSources } from '@/data/aquaguardData';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   projectToSvg,
   KENYA_OUTLINE_PATH,
