@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Waves } from 'lucide-react';
 import heroBg from '@/assets/hero-drought.jpg';
+import RainEffect from '@/components/RainEffect';
 
 const HeroSection = () => {
   return (

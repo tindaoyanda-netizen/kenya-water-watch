@@ -258,6 +258,10 @@
     stroke-dasharray: 20 20;
     animation: current-flow 1.5s linear infinite;
   }
+
+  .animate-rain {
+    animation: rain-fall linear infinite;
+  }
 }
 
 @keyframes fadeUp {
