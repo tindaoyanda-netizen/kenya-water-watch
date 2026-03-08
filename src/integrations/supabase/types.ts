@@ -25,11 +25,14 @@ export type Database = {
           id: string
           image_url: string | null
           is_duplicate: boolean | null
+          landmark: string | null
           latitude: number
           longitude: number
           report_type: Database["public"]["Enums"]["report_type"]
           reporter_id: string
+          road_name: string | null
           status: Database["public"]["Enums"]["report_status"]
+          sub_location: string | null
           town_name: string | null
           updated_at: string
         }
@@ -43,11 +46,14 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_duplicate?: boolean | null
+          landmark?: string | null
           latitude: number
           longitude: number
           report_type: Database["public"]["Enums"]["report_type"]
           reporter_id: string
+          road_name?: string | null
           status?: Database["public"]["Enums"]["report_status"]
+          sub_location?: string | null
           town_name?: string | null
           updated_at?: string
         }
@@ -61,11 +67,14 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_duplicate?: boolean | null
+          landmark?: string | null
           latitude?: number
           longitude?: number
           report_type?: Database["public"]["Enums"]["report_type"]
           reporter_id?: string
+          road_name?: string | null
           status?: Database["public"]["Enums"]["report_status"]
+          sub_location?: string | null
           town_name?: string | null
           updated_at?: string
         }
