@@ -142,6 +142,28 @@ const EnhancedKenyaMap = ({
   const handleZoomOut = () => setZoom(prev => Math.max(MIN_ZOOM, prev / 1.4));
   const handleReset = () => { setZoom(1); setPan({ x: 0, y: 0 }); };
 
+  // County search
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  const filteredCounties = searchQuery.trim()
+    ? counties.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : [];
+
+  const zoomToCounty = (county: CountyData) => {
+    onCountySelect(county);
+    const pos = projectToSvg(county.coordinates.lat, county.coordinates.lng);
+    const centerX = SVG_WIDTH / 2;
+    const centerY = SVG_HEIGHT / 2;
+    const targetZoom = 3;
+    // Pan so county center is at screen center
+    setPan({ x: (centerX - pos.x) * targetZoom * 0.35, y: (centerY - pos.y) * targetZoom * 0.35 });
+    setZoom(targetZoom);
+    setSearchQuery('');
+    setShowSearch(false);
+  };
+
   // Use CSS transform for zoom/pan (more reliable than viewBox manipulation)
   const transformStyle = {
     transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${pan.y / zoom}px)`,
