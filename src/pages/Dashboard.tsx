@@ -164,6 +164,10 @@ const Dashboard = () => {
     enabled: !!user && !isCountyAdmin,
   });
 
+  if (!dashboardReady) {
+    return <DashboardSkeleton />;
+  }
+
   return (
     <div className="min-h-screen bg-background relative">
       {/* Background rain atmosphere */}
