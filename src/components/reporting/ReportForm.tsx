@@ -11,7 +11,8 @@ import {
   Upload, 
   Loader2,
   CheckCircle2,
-  Info
+  Info,
+  Camera
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
