@@ -86,11 +86,14 @@ const Navbar = () => {
               >
                 Dashboard
               </Link>
-              <Link to="/auth" onClick={() => setIsOpen(false)}>
-                <Button variant="default" size="lg" className="w-full">
-                  Get Started
-                </Button>
-              </Link>
+              <div className="flex items-center justify-between">
+                <ThemeToggle />
+                <Link to="/auth" onClick={() => setIsOpen(false)} className="flex-1 ml-3">
+                  <Button variant="default" size="lg" className="w-full">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
             </div>
           </motion.div>
         )}
