@@ -23,8 +23,11 @@ import { kenyaCounties } from '@/data/aquaguardData';
 
 const reportSchema = z.object({
   reportType: z.enum(['flooded_road', 'dry_borehole', 'broken_kiosk', 'overflowing_river']),
-  townName: z.string().optional(),
-  description: z.string().max(500, 'Description must be less than 500 characters').optional(),
+  townName: z.string().trim().min(1, 'Town/area name is required').max(100),
+  subLocation: z.string().trim().max(100).optional(),
+  roadName: z.string().trim().max(150).optional(),
+  landmark: z.string().trim().max(200).optional(),
+  description: z.string().trim().max(500, 'Description must be less than 500 characters').optional(),
 });
 
 type ReportFormData = z.infer<typeof reportSchema>;
@@ -124,12 +127,15 @@ const ReportForm = ({ isOpen, onClose, userLocation, userCountyId, onReportSubmi
           report_type: data.reportType,
           county_id: userCountyId,
           town_name: data.townName || null,
+          sub_location: data.subLocation || null,
+          road_name: data.roadName || null,
+          landmark: data.landmark || null,
           latitude: userLocation.lat,
           longitude: userLocation.lng,
           description: data.description || null,
           image_url: imageUrl,
           status: 'pending',
-        })
+        } as any)
         .select()
         .single();
 
@@ -277,20 +283,53 @@ const ReportForm = ({ isOpen, onClose, userLocation, userCountyId, onReportSubmi
 
                   {/* Town Name */}
                   <div className="space-y-2">
-                    <Label htmlFor="townName">Town/Area Name (Optional)</Label>
+                    <Label htmlFor="townName">Town/Area Name *</Label>
                     <Input
                       id="townName"
-                      placeholder="e.g., Westlands, Kibera"
+                      placeholder="e.g., Westlands, Kibera, Bondo Town"
                       {...register('townName')}
+                    />
+                    {errors.townName && (
+                      <p className="text-sm text-destructive">{errors.townName.message}</p>
+                    )}
+                  </div>
+
+                  {/* Sub-location */}
+                  <div className="space-y-2">
+                    <Label htmlFor="subLocation">Sub-location / Ward</Label>
+                    <Input
+                      id="subLocation"
+                      placeholder="e.g., South B Ward, Usonga Sub-location"
+                      {...register('subLocation')}
+                    />
+                  </div>
+
+                  {/* Road Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="roadName">Road / Street Name</Label>
+                    <Input
+                      id="roadName"
+                      placeholder="e.g., Mombasa Road, near junction of..."
+                      {...register('roadName')}
+                    />
+                  </div>
+
+                  {/* Landmark */}
+                  <div className="space-y-2">
+                    <Label htmlFor="landmark">Nearest Landmark</Label>
+                    <Input
+                      id="landmark"
+                      placeholder="e.g., opposite Tuskys, near Bondo Primary School"
+                      {...register('landmark')}
                     />
                   </div>
 
                   {/* Description */}
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description (Optional)</Label>
+                    <Label htmlFor="description">Additional Details</Label>
                     <Textarea
                       id="description"
-                      placeholder="Provide additional details about the situation..."
+                      placeholder="Describe the situation: how severe is it, how many people affected, any urgent needs..."
                       className="min-h-[100px]"
                       {...register('description')}
                     />
