@@ -62,6 +62,8 @@ const Dashboard = () => {
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [showMyReports, setShowMyReports] = useState(false);
   const [showDemoForm, setShowDemoForm] = useState(false);
+  const [showAlertThresholds, setShowAlertThresholds] = useState(false);
+  const [dashboardReady, setDashboardReady] = useState(false);
   const nationalStats = getNationalStats();
 
   // Auto-collapse sidebar on mobile
