@@ -129,7 +129,7 @@ const NotificationsPanel = ({
                           {notification.countyId !== 'national' && (
                             <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
                               <MapPin className="w-3 h-3" />
-                              <span>{notification.countyId}</span>
+                              <span>{kenyaCounties.find(c => c.id === notification.countyId)?.name || notification.countyId} County</span>
                             </div>
                           )}
                         </div>
