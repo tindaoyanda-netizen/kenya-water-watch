@@ -32,113 +32,45 @@ const projectToSvg = (lat: number, lng: number) => {
   return { x, y };
 };
 
-// Geographically accurate Kenya outline path (simplified but recognizable)
-const KENYA_OUTLINE = (() => {
-  // Key border points of Kenya (lat, lng) traced clockwise from NW
-  const borderPoints: [number, number][] = [
-    // Northwestern border (Uganda/South Sudan)
-    [4.23, 35.80],  // NW tip near Ilemi
-    [4.62, 35.95],
-    [5.00, 35.75],
-    [5.40, 35.60],  // Ilemi triangle top
-    [5.02, 35.30],
-    [4.63, 33.98],  // NW corner near Lake Turkana/Uganda
-    // Western border (Uganda)
-    [4.23, 34.38],
-    [3.49, 34.40],
-    [1.65, 34.40],
-    [1.00, 34.00],
-    [0.60, 34.30],
-    [0.40, 34.07],
-    [0.02, 34.02],
-    [-0.10, 34.10],
-    [-0.40, 34.08],
-    [-0.65, 33.92],
-    [-1.00, 33.92],
-    [-1.05, 34.00],
-    // Lake Victoria shoreline (approximate)
-    [-1.10, 34.20],
-    [-1.30, 34.60],
-    [-1.50, 34.80],
-    // Tanzania border
-    [-1.73, 34.80],
-    [-1.85, 34.60],
-    [-2.00, 34.50],
-    [-2.70, 35.35],
-    [-3.05, 37.00],
-    [-3.40, 37.65],
-    [-3.70, 37.60],
-    [-4.05, 37.70],
-    [-4.45, 39.20],
-    [-4.68, 39.18],
-    // Coast
-    [-4.65, 39.25],
-    [-4.50, 39.45],
-    [-4.05, 39.58],
-    [-3.55, 39.85],
-    [-3.30, 40.00],
-    [-2.50, 40.15],
-    [-1.68, 41.00],
-    [-1.62, 41.30],
-    // Somalia border
-    [-0.40, 41.50],
-    [0.10, 41.00],
-    [1.60, 41.00],
-    [2.05, 41.30],
-    [3.50, 41.90],
-    [3.95, 41.87],
-    // Ethiopia border
-    [4.25, 41.85],
-    [4.62, 41.20],
-    [3.95, 40.98],
-    [3.50, 39.50],
-    [4.22, 38.98],
-    [4.30, 38.45],
-    [4.25, 37.00],
-    [4.80, 36.80],
-    [5.30, 36.45],
-    [5.40, 35.92],
-    [5.40, 35.60],
-  ];
+// Real Kenya border from Natural Earth GeoJSON data [lng, lat] pairs
+const KENYA_BORDER_COORDS: [number, number][] = [
+  [40.993,-0.85829],[41.58513,-1.68325],[40.88477,-2.08255],[40.63785,-2.49979],
+  [40.26304,-2.57309],[40.12119,-3.27768],[39.80006,-3.68116],[39.60489,-4.34653],
+  [39.20222,-4.67677],[37.7669,-3.67712],[37.69869,-3.09699],[34.07262,-1.05982],
+  [33.903711,-0.95],[33.893569,0.109814],[34.18,0.515],[34.6721,1.17694],
+  [35.03599,1.90584],[34.59607,3.05374],[34.47913,3.5556],[34.005,4.249885],
+  [34.620196,4.847123],[35.298007,5.506],[35.817448,5.338232],[35.817448,4.776966],
+  [36.159079,4.447864],[36.855093,4.447864],[38.120915,3.598605],[38.43697,3.58851],
+  [38.67114,3.61607],[38.89251,3.50074],[39.559384,3.42206],[39.85494,3.83879],
+  [40.76848,4.25702],[41.1718,3.91909],[41.855083,3.918912],[40.98105,2.78452],
+  [40.993,-0.85829],
+];
 
-  const svgPoints = borderPoints.map(([lat, lng]) => projectToSvg(lat, lng));
+const KENYA_OUTLINE = (() => {
+  const svgPoints = KENYA_BORDER_COORDS.map(([lng, lat]) => projectToSvg(lat, lng));
   return `M ${svgPoints.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ')} Z`;
 })();
 
-// Lake Victoria (approximate visible portion within Kenya)
+// Lake Victoria (Kenya's portion)
 const LAKE_VICTORIA = (() => {
   const lakePoints: [number, number][] = [
-    [-0.10, 34.10],
-    [-0.05, 34.40],
-    [-0.20, 34.72],
-    [-0.50, 34.88],
-    [-0.80, 34.72],
-    [-1.10, 34.20],
-    [-1.05, 34.00],
-    [-0.65, 33.92],
-    [-0.40, 34.08],
-    [-0.10, 34.10],
+    [33.92, -0.95], [34.07, -1.06], [34.30, -1.15], [34.55, -1.05],
+    [34.72, -0.75], [34.80, -0.45], [34.65, -0.15], [34.35, 0.02],
+    [34.10, 0.10], [33.90, 0.05], [33.89, -0.30], [33.90, -0.60],
+    [33.92, -0.95],
   ];
-  const svgPoints = lakePoints.map(([lat, lng]) => projectToSvg(lat, lng));
+  const svgPoints = lakePoints.map(([lng, lat]) => projectToSvg(lat, lng));
   return `M ${svgPoints.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ')} Z`;
 })();
 
 // Lake Turkana
 const LAKE_TURKANA = (() => {
   const lakePoints: [number, number][] = [
-    [4.40, 36.10],
-    [4.20, 36.30],
-    [3.60, 36.15],
-    [3.00, 36.05],
-    [2.50, 36.60],
-    [2.42, 36.80],
-    [2.55, 36.85],
-    [3.10, 36.30],
-    [3.60, 36.35],
-    [4.10, 36.40],
-    [4.40, 36.10],
+    [36.05, 4.40], [36.25, 4.20], [36.40, 3.80], [36.60, 3.30],
+    [36.80, 2.80], [36.85, 2.50], [36.70, 2.45], [36.50, 2.60],
+    [36.30, 3.00], [36.15, 3.50], [36.10, 3.90], [36.05, 4.40],
   ];
-  const svgPoints = lakePoints.map(([lat, lng]) => projectToSvg(lat, lng));
+  const svgPoints = lakePoints.map(([lng, lat]) => projectToSvg(lat, lng));
   return `M ${svgPoints.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ')} Z`;
 })();
 
