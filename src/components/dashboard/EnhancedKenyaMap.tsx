@@ -51,40 +51,26 @@ const KENYA_OUTLINE = (() => {
   return `M ${svgPoints.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ')} Z`;
 })();
 
-// Lake Victoria (approximate visible portion within Kenya)
+// Lake Victoria (Kenya's portion)
 const LAKE_VICTORIA = (() => {
   const lakePoints: [number, number][] = [
-    [-0.10, 34.10],
-    [-0.05, 34.40],
-    [-0.20, 34.72],
-    [-0.50, 34.88],
-    [-0.80, 34.72],
-    [-1.10, 34.20],
-    [-1.05, 34.00],
-    [-0.65, 33.92],
-    [-0.40, 34.08],
-    [-0.10, 34.10],
+    [33.92, -0.95], [34.07, -1.06], [34.30, -1.15], [34.55, -1.05],
+    [34.72, -0.75], [34.80, -0.45], [34.65, -0.15], [34.35, 0.02],
+    [34.10, 0.10], [33.90, 0.05], [33.89, -0.30], [33.90, -0.60],
+    [33.92, -0.95],
   ];
-  const svgPoints = lakePoints.map(([lat, lng]) => projectToSvg(lat, lng));
+  const svgPoints = lakePoints.map(([lng, lat]) => projectToSvg(lat, lng));
   return `M ${svgPoints.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ')} Z`;
 })();
 
 // Lake Turkana
 const LAKE_TURKANA = (() => {
   const lakePoints: [number, number][] = [
-    [4.40, 36.10],
-    [4.20, 36.30],
-    [3.60, 36.15],
-    [3.00, 36.05],
-    [2.50, 36.60],
-    [2.42, 36.80],
-    [2.55, 36.85],
-    [3.10, 36.30],
-    [3.60, 36.35],
-    [4.10, 36.40],
-    [4.40, 36.10],
+    [36.05, 4.40], [36.25, 4.20], [36.40, 3.80], [36.60, 3.30],
+    [36.80, 2.80], [36.85, 2.50], [36.70, 2.45], [36.50, 2.60],
+    [36.30, 3.00], [36.15, 3.50], [36.10, 3.90], [36.05, 4.40],
   ];
-  const svgPoints = lakePoints.map(([lat, lng]) => projectToSvg(lat, lng));
+  const svgPoints = lakePoints.map(([lng, lat]) => projectToSvg(lat, lng));
   return `M ${svgPoints.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ')} Z`;
 })();
 
