@@ -203,7 +203,7 @@ const EnhancedKenyaMap = ({
   };
 
   return (
-    <div className="relative bg-muted/30 rounded-2xl p-2 sm:p-4 h-full min-h-[400px] overflow-hidden">
+    <div ref={containerRef} className="relative bg-muted/30 rounded-2xl p-2 sm:p-4 h-full min-h-[400px] overflow-hidden touch-none">
       <svg 
         ref={svgRef}
         viewBox={viewBox}
