@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertTriangle, Droplets, CloudRain, Info, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Notification } from '@/data/aquaguardData';
+import { Notification, kenyaCounties } from '@/data/aquaguardData';
 
 interface NotificationsPanelProps {
   isOpen: boolean;
