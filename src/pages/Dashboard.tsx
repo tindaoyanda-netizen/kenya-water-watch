@@ -402,6 +402,12 @@ const Dashboard = () => {
         onClose={() => setShowDemoForm(false)}
         demoCountyId={selectedCounty?.id || 'kakamega'}
       />
+
+      {/* Alert Thresholds */}
+      <AlertThresholds
+        isOpen={showAlertThresholds}
+        onClose={() => setShowAlertThresholds(false)}
+      />
     </div>
   );
 };
