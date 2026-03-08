@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertTriangle, Droplets, CloudRain, Info, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Notification } from '@/data/aquaguardData';
+import { Notification, kenyaCounties } from '@/data/aquaguardData';
 
 interface NotificationsPanelProps {
   isOpen: boolean;
@@ -129,7 +129,7 @@ const NotificationsPanel = ({
                           {notification.countyId !== 'national' && (
                             <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
                               <MapPin className="w-3 h-3" />
-                              <span>{notification.countyId}</span>
+                              <span>{kenyaCounties.find(c => c.id === notification.countyId)?.name || notification.countyId} County</span>
                             </div>
                           )}
                         </div>
