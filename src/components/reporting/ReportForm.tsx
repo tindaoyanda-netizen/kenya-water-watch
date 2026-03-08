@@ -247,6 +247,7 @@ const ReportForm = ({ isOpen, onClose, userLocation, userCountyId, onReportSubmi
   };
 
   const handleClose = () => {
+    closeCamera();
     reset();
     setImageFile(null);
     setImagePreview(null);
