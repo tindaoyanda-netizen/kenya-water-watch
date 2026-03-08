@@ -252,7 +252,7 @@ const AdminDashboard = ({ isOpen, onClose, userCountyId }: AdminDashboardProps) 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-background"
+          className="fixed inset-0 z-50 bg-background overflow-y-auto"
         >
           {/* Header */}
           <div className="sticky top-0 bg-card border-b border-border p-4 z-20">
@@ -389,12 +389,12 @@ const AdminDashboard = ({ isOpen, onClose, userCountyId }: AdminDashboardProps) 
               </div>
 
               {/* Report Details Panel */}
-              <div className="lg:sticky lg:top-24 h-fit">
+              <div className="lg:sticky lg:top-24 h-fit max-h-[calc(100vh-8rem)] overflow-y-auto">
                 {selectedReport ? (
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-card rounded-xl border border-border overflow-hidden"
+                    className="bg-card rounded-xl border border-border overflow-hidden pb-2"
                   >
                     {/* Image */}
                     {selectedReport.image_url && (
