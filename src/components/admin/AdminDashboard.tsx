@@ -154,6 +154,16 @@ const AdminDashboard = ({ isOpen, onClose, userCountyId }: AdminDashboardProps) 
     }
   };
 
+  const notifyResident = async (reportId: string, action: string, adminMessage?: string) => {
+    try {
+      await supabase.functions.invoke('notify-resident', {
+        body: { reportId, action, adminMessage },
+      });
+    } catch (e) {
+      console.warn('Email notification failed (non-blocking):', e);
+    }
+  };
+
   const sendReply = async () => {
     if (!selectedReport || !replyMessage.trim()) return;
 
@@ -172,9 +182,12 @@ const AdminDashboard = ({ isOpen, onClose, userCountyId }: AdminDashboardProps) 
 
       if (error) throw error;
 
+      // Send email notification (non-blocking)
+      notifyResident(selectedReport.id, 'reply', replyMessage.trim());
+
       setReplyMessage('');
       fetchReplies(selectedReport.id);
-      toast({ title: 'Reply sent', description: 'Your response has been posted.' });
+      toast({ title: 'Reply sent', description: 'Your response has been posted and the resident will be notified.' });
     } catch (error) {
       console.error('Reply error:', error);
       toast({
@@ -215,9 +228,12 @@ const AdminDashboard = ({ isOpen, onClose, userCountyId }: AdminDashboardProps) 
 
       if (verificationError) throw verificationError;
 
+      // Send email notification (non-blocking)
+      notifyResident(selectedReport.id, action, comment || undefined);
+
       toast({
         title: action === 'verified' ? 'Report Verified' : 'Report Rejected',
-        description: `The report has been ${action} successfully`,
+        description: `The report has been ${action} successfully. Resident notified.`,
       });
 
       setSelectedReport(null);
