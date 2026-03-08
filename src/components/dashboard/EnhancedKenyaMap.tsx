@@ -141,13 +141,12 @@ const EnhancedKenyaMap = ({
   const handleZoomOut = () => setZoom(prev => Math.max(MIN_ZOOM, prev / 1.4));
   const handleReset = () => { setZoom(1); setPan({ x: 0, y: 0 }); };
 
-  const viewBox = (() => {
-    const vw = SVG_WIDTH / zoom;
-    const vh = SVG_HEIGHT / zoom;
-    const vx = (SVG_WIDTH - vw) / 2 - pan.x / zoom;
-    const vy = (SVG_HEIGHT - vh) / 2 - pan.y / zoom;
-    return `${vx} ${vy} ${vw} ${vh}`;
-  })();
+  // Use CSS transform for zoom/pan (more reliable than viewBox manipulation)
+  const transformStyle = {
+    transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${pan.y / zoom}px)`,
+    transformOrigin: 'center center',
+    transition: isPanning ? 'none' : 'transform 0.2s ease-out',
+  };
 
   const getSimulatedRiskLevel = (county: CountyData) => {
     const rainfallChange = (simulationRainfall - 50) / 100;
@@ -206,9 +205,10 @@ const EnhancedKenyaMap = ({
     <div ref={containerRef} className="relative bg-muted/30 rounded-2xl p-2 sm:p-4 h-full min-h-[400px] overflow-hidden touch-none">
       <svg 
         ref={svgRef}
-        viewBox={viewBox}
+        viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
         className={`w-full h-full ${isPanning ? 'cursor-grabbing' : zoom > 1 ? 'cursor-grab' : ''}`}
         preserveAspectRatio="xMidYMid meet"
+        style={transformStyle}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -528,7 +528,7 @@ const EnhancedKenyaMap = ({
       </div>
       
       {/* Zoom Controls */}
-      <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 flex flex-col gap-1">
+      <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 z-10 flex flex-col gap-1">
         <Button variant="outline" size="icon" className="h-7 w-7 bg-card/90 backdrop-blur-sm border-border" onClick={handleZoomIn}>
           <ZoomIn className="h-3.5 w-3.5" />
         </Button>
