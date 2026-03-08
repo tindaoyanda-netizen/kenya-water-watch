@@ -76,6 +76,12 @@ const Dashboard = () => {
     }
   }, [isMobile]);
 
+  // Simulate initial data loading
+  useEffect(() => {
+    const timer = setTimeout(() => setDashboardReady(true), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     if (profile?.county_id) {
       const county = kenyaCounties.find(c => c.id === profile.county_id);
