@@ -40,6 +40,7 @@ const Navbar = () => {
             >
               Dashboard
             </Link>
+            <ThemeToggle variant={isHome ? 'glass' : 'default'} />
             <Link to="/auth">
               <Button variant={isHome ? 'glass' : 'default'} size="default">
                 Get Started
