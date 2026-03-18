@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_logs: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          function_name: string
+          id: string
+          request_metadata: Json | null
+          status_code: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          function_name: string
+          id?: string
+          request_metadata?: Json | null
+          status_code?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          function_name?: string
+          id?: string
+          request_metadata?: Json | null
+          status_code?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       environmental_reports: {
         Row: {
           ai_analysis: string | null
@@ -197,6 +230,39 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      water_metrics_history: {
+        Row: {
+          county_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          metric_type: string
+          metric_value: number
+          recorded_at: string
+          source: string | null
+        }
+        Insert: {
+          county_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          metric_type: string
+          metric_value: number
+          recorded_at?: string
+          source?: string | null
+        }
+        Update: {
+          county_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          metric_type?: string
+          metric_value?: number
+          recorded_at?: string
+          source?: string | null
         }
         Relationships: []
       }
