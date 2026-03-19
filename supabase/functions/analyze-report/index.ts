@@ -14,6 +14,7 @@ interface ReportAnalysisRequest {
   latitude: number;
   longitude: number;
   description: string | null;
+  imageUrl: string | null;
   weatherData?: {
     temperature: number;
     humidity: number;
@@ -21,7 +22,7 @@ interface ReportAnalysisRequest {
   };
 }
 
-// Kenya-specific flood-prone regions and their risk factors
+// Kenya-specific flood-prone regions
 const FLOOD_PRONE_REGIONS: Record<string, { rivers: string[]; riskFactors: string[]; historicalPattern: string }> = {
   kakamega: { rivers: ['Nzoia', 'Yala'], riskFactors: ['Budalangi floodplain', 'Lake Victoria backflow', 'high rainfall zone'], historicalPattern: 'Annual flooding during long rains (Mar-May), flash floods common in Mumias and Budalangi' },
   kisumu: { rivers: ['Nyando', 'Sondu-Miriu'], riskFactors: ['Lake Victoria proximity', 'Kano Plains floodplain', 'poor drainage'], historicalPattern: 'Regular flooding in Nyando basin, Nyalenda slums affected during heavy rains' },
@@ -29,14 +30,14 @@ const FLOOD_PRONE_REGIONS: Record<string, { rivers: string[]; riskFactors: strin
   homabay: { rivers: ['Kuja', 'Migori'], riskFactors: ['Lake Victoria shoreline', 'river convergence'], historicalPattern: 'Lakeside flooding during high lake levels' },
   busia: { rivers: ['Nzoia', 'Sio'], riskFactors: ['Budalangi floodplain extension', 'flat lowlands'], historicalPattern: 'Severe annual flooding in Budalangi division' },
   tanariver: { rivers: ['Tana'], riskFactors: ['Tana River floodplain', 'dam releases from Seven Forks', 'low elevation'], historicalPattern: 'Devastating floods when upstream dams release water, affects Garsen and Hola' },
-  garissa: { rivers: ['Tana', 'Ewaso Ng\'iro'], riskFactors: ['semi-arid flash floods', 'Tana River overflow'], historicalPattern: 'Flash floods during October-December short rains, riverbank flooding' },
+  garissa: { rivers: ['Tana', "Ewaso Ng'iro"], riskFactors: ['semi-arid flash floods', 'Tana River overflow'], historicalPattern: 'Flash floods during October-December short rains, riverbank flooding' },
   kilifi: { rivers: ['Sabaki/Athi', 'Rare'], riskFactors: ['coastal lowlands', 'river deltas', 'poor drainage'], historicalPattern: 'Coastal flooding during monsoon, Malindi frequently affected' },
   mombasa: { rivers: [], riskFactors: ['coastal storm surges', 'poor urban drainage', 'low-lying island geography'], historicalPattern: 'Urban flooding in Likoni, Kisauni; tidal flooding during high tide + rainfall events' },
   nairobi: { rivers: ['Nairobi', 'Mathare', 'Ngong'], riskFactors: ['rapid urbanization', 'clogged drains', 'informal settlements on riverbanks'], historicalPattern: 'Flash floods in Mathare, Kibera, Eastleigh during moderate-heavy rainfall (>20mm/day)' },
   turkana: { rivers: ['Turkwel', 'Kerio'], riskFactors: ['dry riverbed flash floods', 'desert terrain'], historicalPattern: 'Rare but deadly flash floods in dry riverbeds during sudden rainfall' },
   marsabit: { rivers: [], riskFactors: ['desert flash floods', 'volcanic terrain'], historicalPattern: 'Flash floods in wadis during short rains' },
   mandera: { rivers: ['Daua'], riskFactors: ['semi-arid terrain', 'Daua River overflow'], historicalPattern: 'River flooding from Ethiopian highlands runoff' },
-  wajir: { rivers: ['Ewaso Ng\'iro'], riskFactors: ['dry riverbed flash floods'], historicalPattern: 'Occasional flash floods during short rains' },
+  wajir: { rivers: ["Ewaso Ng'iro"], riskFactors: ['dry riverbed flash floods'], historicalPattern: 'Occasional flash floods during short rains' },
   nyandarua: { rivers: ['Malewa', 'Gilgil', 'Turasha'], riskFactors: ['highland water catchment', 'steep terrain'], historicalPattern: 'Landslides and flooding in valleys during heavy rains' },
   nyeri: { rivers: ['Sagana', 'Chania'], riskFactors: ['Mt. Kenya runoff', 'steep terrain'], historicalPattern: 'River flooding from Mt. Kenya glacial melt + rainfall' },
   muranga: { rivers: ['Mathioya', 'Maragua'], riskFactors: ['steep highland terrain', 'deforestation'], historicalPattern: 'Landslides and flash floods in deforested areas' },
@@ -44,19 +45,64 @@ const FLOOD_PRONE_REGIONS: Record<string, { rivers: string[]; riskFactors: strin
   elgeyomarakwet: { rivers: ['Kerio'], riskFactors: ['Kerio Valley floor', 'landslide-prone escarpments'], historicalPattern: 'Valley flooding and escarpment landslides' },
   baringo: { rivers: ['Perkerra', 'Molo'], riskFactors: ['Lake Baringo rising levels', 'Perkerra River floods'], historicalPattern: 'Lake Baringo has been rising steadily, displacing communities' },
   nakuru: { rivers: ['Njoro', 'Makalia'], riskFactors: ['Lake Nakuru basin'], historicalPattern: 'Occasional flooding near Lake Nakuru' },
-  narok: { rivers: ['Mara', 'Ewaso Ng\'iro'], riskFactors: ['Mara River overflow'], historicalPattern: 'Flooding during heavy rains in Mara basin' },
+  narok: { rivers: ['Mara', "Ewaso Ng'iro"], riskFactors: ['Mara River overflow'], historicalPattern: 'Flooding during heavy rains in Mara basin' },
   bomet: { rivers: ['Nyangores', 'Amala'], riskFactors: ['Mara River tributaries'], historicalPattern: 'River flooding in lowland areas' },
   nyamira: { rivers: ['Gucha'], riskFactors: ['highland terrain', 'heavy rainfall zone'], historicalPattern: 'Frequent flooding during long rains' },
   migori: { rivers: ['Migori', 'Kuja'], riskFactors: ['Lake Victoria proximity', 'river flooding'], historicalPattern: 'Regular seasonal flooding' },
 };
 
-// Rainfall thresholds for Kenya (mm in 24h)
 const RAINFALL_THRESHOLDS = {
-  light: 10,      // Normal
-  moderate: 25,    // Watch advisories
-  heavy: 50,       // Flood warnings for vulnerable areas
-  extreme: 100,    // Severe flood warnings nationwide
+  light: 10,
+  moderate: 25,
+  heavy: 50,
+  extreme: 100,
 };
+
+// Severity determination based on report type + conditions
+function determineSeverity(
+  reportType: string,
+  confidenceScore: number,
+  floodRisk: string,
+  rainfall: number | null,
+  corroborationCount: number
+): { level: string; shouldEscalate: boolean } {
+  let severity = "low";
+  let shouldEscalate = false;
+
+  // Base severity from report type
+  const highSeverityTypes = ["overflowing_river", "flooded_road"];
+  const mediumSeverityTypes = ["dry_borehole", "broken_kiosk"];
+
+  if (highSeverityTypes.includes(reportType)) {
+    severity = "medium";
+    if (rainfall && rainfall >= RAINFALL_THRESHOLDS.heavy) severity = "high";
+    if (rainfall && rainfall >= RAINFALL_THRESHOLDS.extreme) severity = "critical";
+  } else if (mediumSeverityTypes.includes(reportType)) {
+    severity = "low";
+    if (reportType === "dry_borehole" && corroborationCount >= 2) severity = "medium";
+  }
+
+  // Boost from corroboration
+  if (corroborationCount >= 5 && severity !== "critical") {
+    severity = severity === "high" ? "critical" : severity === "medium" ? "high" : "medium";
+  }
+
+  // Boost from flood risk
+  if (floodRisk === "critical" || floodRisk === "high") {
+    if (severity === "medium") severity = "high";
+    if (severity === "low") severity = "medium";
+  }
+
+  // Boost from high confidence
+  if (confidenceScore >= 85 && (severity === "medium" || severity === "high")) {
+    severity = severity === "high" ? "critical" : "high";
+  }
+
+  // Escalation rules
+  shouldEscalate = severity === "critical" || (severity === "high" && corroborationCount >= 3);
+
+  return { level: severity, shouldEscalate };
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -98,9 +144,11 @@ serve(async (req) => {
       latitude,
       longitude,
       description,
+      imageUrl,
       weatherData,
     }: ReportAnalysisRequest = await req.json();
 
+    const startTime = Date.now();
     console.log("Analyzing report:", { reportId, reportType, countyId });
 
     // Fetch similar recent reports for duplicate detection
@@ -162,15 +210,21 @@ KEY KNOWLEDGE:
 - Climate change has increased rainfall variability and extreme events in Kenya.
 
 ANALYSIS CRITERIA:
-1. Cross-reference the report type with current weather conditions — does the weather support the claim?
+1. Cross-reference the report type with current weather conditions.
 2. Consider regional flood history and vulnerability.
 3. Evaluate the description quality and specificity.
 4. Factor in the number of similar reports (corroboration increases confidence).
-5. Consider seasonal patterns — is this report consistent with the current season?
+5. Consider seasonal patterns.
 6. For flood reports: check rainfall thresholds against regional vulnerability.
 7. For dry borehole reports: consider the county's typical water stress and recent rainfall.
 8. Be skeptical of flood reports in arid regions with no recent rainfall (unless flash flood patterns).
-9. Be skeptical of dry borehole reports in well-watered highland counties.`;
+9. Be skeptical of dry borehole reports in well-watered highland counties.
+10. If a photo URL is provided, assess whether the described report type matches expectations for that kind of image.
+11. Assign a severity level: critical (immediate danger to life/infrastructure), high (significant impact requiring urgent response), medium (notable concern requiring attention), low (minor issue, routine follow-up).`;
+
+    const photoContext = imageUrl
+      ? `\nPHOTO: An image was attached to this report (URL: ${imageUrl}). Assess whether the report type is consistent with what such a photo would typically show. Note any concerns about photo authenticity or relevance in your analysis.`
+      : "\nPHOTO: No photo was attached to this report. Note this reduces verification confidence.";
 
     const userPrompt = `Analyze this environmental report from Kenya:
 
@@ -178,6 +232,7 @@ REPORT TYPE: ${reportTypeDescriptions[reportType] || reportType}
 LOCATION: ${townName ? `${townName}, ` : ""}${countyId} County, Kenya
 GPS: ${latitude.toFixed(4)}°S, ${longitude.toFixed(4)}°E
 DESCRIPTION: ${description || "No description provided"}
+${photoContext}
 
 WEATHER CONDITIONS:
 ${weatherData
@@ -197,9 +252,8 @@ ${floodContext
 CORROBORATION: ${similarReports?.length || 0} similar reports in this area in the last 24h
 ${isDuplicate ? "⚠️ POTENTIAL DUPLICATE: Nearly identical report within 500m radius in last 24h" : ""}
 
-Provide your analysis.`;
+Provide your analysis with severity assessment.`;
 
-    // Use tool calling for structured output
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -218,29 +272,39 @@ Provide your analysis.`;
             type: "function",
             function: {
               name: "submit_analysis",
-              description: "Submit the environmental report analysis with a confidence score and detailed assessment.",
+              description: "Submit the environmental report analysis with confidence score, severity, and detailed assessment.",
               parameters: {
                 type: "object",
                 properties: {
                   confidence_score: {
                     type: "integer",
-                    description: "Credibility score 0-100. 80-100: Very credible, weather/context strongly supports. 60-79: Likely credible, some supporting evidence. 40-59: Uncertain, mixed signals. 20-39: Unlikely, conditions don't support. 0-19: Very unlikely or suspected false report.",
+                    description: "Credibility score 0-100. 80-100: Very credible. 60-79: Likely credible. 40-59: Uncertain. 20-39: Unlikely. 0-19: Very unlikely or suspected false.",
                   },
                   analysis: {
                     type: "string",
-                    description: "2-4 sentence scientific assessment. Reference specific weather data, regional flood history, or water infrastructure context. Explain what supports or contradicts the report.",
+                    description: "2-4 sentence scientific assessment referencing weather data, regional history, or infrastructure context.",
                   },
                   flood_risk_assessment: {
                     type: "string",
                     enum: ["none", "low", "moderate", "high", "critical"],
-                    description: "Current flood risk level for this specific location based on weather, terrain, and report type.",
+                    description: "Current flood risk level for this location.",
+                  },
+                  severity_level: {
+                    type: "string",
+                    enum: ["low", "medium", "high", "critical"],
+                    description: "Severity: critical=immediate danger, high=urgent response needed, medium=attention required, low=routine.",
+                  },
+                  photo_validation: {
+                    type: "string",
+                    enum: ["verified", "plausible", "uncertain", "suspicious", "no_photo"],
+                    description: "Photo assessment: verified=clearly matches report, plausible=likely matches, uncertain=can't determine, suspicious=inconsistent, no_photo=none provided.",
                   },
                   recommended_action: {
                     type: "string",
-                    description: "Specific recommended action for the County Admin (e.g., 'Deploy field team to verify', 'Issue flood warning for affected area', 'Mark as low priority').",
+                    description: "Specific recommended action for County Admin.",
                   },
                 },
-                required: ["confidence_score", "analysis", "flood_risk_assessment", "recommended_action"],
+                required: ["confidence_score", "analysis", "flood_risk_assessment", "severity_level", "photo_validation", "recommended_action"],
                 additionalProperties: false,
               },
             },
@@ -271,12 +335,14 @@ Provide your analysis.`;
     }
 
     const aiData = await aiResponse.json();
-    console.log("AI Response:", JSON.stringify(aiData));
+    console.log("AI Response received");
 
     // Parse structured tool call response
     let confidenceScore = 50;
     let analysis = "Analysis could not be completed. Manual review recommended.";
     let floodRiskAssessment = "unknown";
+    let severityLevel = "low";
+    let photoValidation = "no_photo";
     let recommendedAction = "Manual review required.";
 
     try {
@@ -286,9 +352,10 @@ Provide your analysis.`;
         confidenceScore = Math.min(100, Math.max(0, parseInt(parsed.confidence_score) || 50));
         analysis = parsed.analysis || analysis;
         floodRiskAssessment = parsed.flood_risk_assessment || floodRiskAssessment;
+        severityLevel = parsed.severity_level || severityLevel;
+        photoValidation = parsed.photo_validation || photoValidation;
         recommendedAction = parsed.recommended_action || recommendedAction;
       } else {
-        // Fallback: try parsing content as JSON
         const content = aiData.choices?.[0]?.message?.content || "";
         const jsonMatch = content.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
@@ -307,18 +374,47 @@ Provide your analysis.`;
       analysis = `⚠️ POTENTIAL DUPLICATE: A similar ${reportType.replace(/_/g, " ")} report exists within 500m from the last 24h. ${analysis}`;
     }
 
-    // Build full analysis text with structured data
-    const fullAnalysis = `${analysis}\n\n📊 Flood Risk: ${floodRiskAssessment.toUpperCase()}\n🎯 Recommended: ${recommendedAction}`;
+    // Determine severity with rule-based logic combined with AI assessment
+    const severityResult = determineSeverity(
+      reportType,
+      confidenceScore,
+      floodRiskAssessment,
+      weatherData?.rainfall24h ?? null,
+      similarReports?.length || 0
+    );
+
+    // Use the higher severity between AI and rule-based
+    const severityRank: Record<string, number> = { low: 0, medium: 1, high: 2, critical: 3 };
+    const finalSeverity = severityRank[severityLevel] >= severityRank[severityResult.level]
+      ? severityLevel
+      : severityResult.level;
+    const shouldEscalate = severityResult.shouldEscalate || finalSeverity === "critical";
+
+    // Build full analysis text
+    const severityEmoji: Record<string, string> = { low: "🟢", medium: "🟡", high: "🟠", critical: "🔴" };
+    const photoEmoji: Record<string, string> = {
+      verified: "✅", plausible: "📷", uncertain: "❓", suspicious: "⚠️", no_photo: "📵"
+    };
+
+    const fullAnalysis = `${analysis}\n\n📊 Flood Risk: ${floodRiskAssessment.toUpperCase()}\n${severityEmoji[finalSeverity] || "⚪"} Severity: ${finalSeverity.toUpperCase()}\n${photoEmoji[photoValidation] || "❓"} Photo: ${photoValidation}\n🎯 Recommended: ${recommendedAction}${shouldEscalate ? "\n\n🚨 AUTO-ESCALATED: This report has been flagged for immediate attention." : ""}`;
 
     // Update report in database
+    const updatePayload: Record<string, unknown> = {
+      ai_confidence_score: confidenceScore,
+      ai_analysis: fullAnalysis,
+      is_duplicate: isDuplicate,
+      duplicate_of: duplicateOfId,
+      severity_level: finalSeverity,
+      photo_validation: photoValidation,
+      escalated: shouldEscalate,
+    };
+    if (shouldEscalate) {
+      updatePayload.escalated_at = new Date().toISOString();
+    }
+
     const { error: updateError } = await supabaseAdmin
       .from("environmental_reports")
-      .update({
-        ai_confidence_score: confidenceScore,
-        ai_analysis: fullAnalysis,
-        is_duplicate: isDuplicate,
-        duplicate_of: duplicateOfId,
-      })
+      .update(updatePayload)
       .eq("id", reportId);
 
     if (updateError) {
@@ -326,7 +422,34 @@ Provide your analysis.`;
       throw new Error("Failed to save analysis");
     }
 
-    console.log("Report analysis complete:", { reportId, confidenceScore, floodRiskAssessment, isDuplicate });
+    // Log API performance
+    const durationMs = Date.now() - startTime;
+    await supabaseAdmin.from("api_logs").insert({
+      function_name: "analyze-report",
+      status_code: 200,
+      duration_ms: durationMs,
+      request_metadata: { reportId, reportType, countyId, severity: finalSeverity, escalated: shouldEscalate },
+    }).then(() => {}).catch(e => console.error("Log insert failed:", e));
+
+    // If escalated, trigger notification to admin
+    if (shouldEscalate) {
+      console.log(`🚨 ESCALATED: Report ${reportId} in ${countyId} — severity: ${finalSeverity}`);
+      // Notify via existing notify-resident function (repurposed for admin alerts)
+      try {
+        await supabaseAdmin.functions.invoke("notify-resident", {
+          body: {
+            reportId,
+            action: "escalated",
+            adminMessage: `🚨 CRITICAL ALERT: A ${reportType.replace(/_/g, " ")} report in ${townName || countyId} has been auto-escalated (severity: ${finalSeverity}, confidence: ${confidenceScore}%). Immediate attention required.`,
+          },
+          headers: { Authorization: authHeader },
+        });
+      } catch (notifyError) {
+        console.error("Escalation notification failed:", notifyError);
+      }
+    }
+
+    console.log("Report analysis complete:", { reportId, confidenceScore, finalSeverity, shouldEscalate });
 
     return new Response(
       JSON.stringify({
@@ -334,9 +457,12 @@ Provide your analysis.`;
         confidence_score: confidenceScore,
         analysis: fullAnalysis,
         flood_risk_assessment: floodRiskAssessment,
+        severity_level: finalSeverity,
+        photo_validation: photoValidation,
         recommended_action: recommendedAction,
         is_duplicate: isDuplicate,
         duplicate_of: duplicateOfId,
+        escalated: shouldEscalate,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
@@ -349,7 +475,6 @@ Provide your analysis.`;
   }
 });
 
-// Haversine formula for distance in km
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371;
   const dLat = toRad(lat2 - lat1);
