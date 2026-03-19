@@ -144,7 +144,7 @@ const Auth = () => {
         await signIn(formData.email, formData.password);
         toast({ title: 'Welcome back!', description: 'You have successfully signed in' });
       } else {
-        await signUp(formData.email, formData.password, formData.name, formData.countyId, formData.role);
+        await signUp(formData.email, formData.password, formData.name, formData.countyId, 'resident');
         toast({ title: 'Account created!', description: 'Please check your email to verify your account' });
       }
       if (formData.countyId) {
