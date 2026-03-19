@@ -55,15 +55,19 @@ export type Database = {
           created_at: string
           description: string | null
           duplicate_of: string | null
+          escalated: boolean | null
+          escalated_at: string | null
           id: string
           image_url: string | null
           is_duplicate: boolean | null
           landmark: string | null
           latitude: number
           longitude: number
+          photo_validation: string | null
           report_type: Database["public"]["Enums"]["report_type"]
           reporter_id: string
           road_name: string | null
+          severity_level: string | null
           status: Database["public"]["Enums"]["report_status"]
           sub_location: string | null
           town_name: string | null
@@ -76,15 +80,19 @@ export type Database = {
           created_at?: string
           description?: string | null
           duplicate_of?: string | null
+          escalated?: boolean | null
+          escalated_at?: string | null
           id?: string
           image_url?: string | null
           is_duplicate?: boolean | null
           landmark?: string | null
           latitude: number
           longitude: number
+          photo_validation?: string | null
           report_type: Database["public"]["Enums"]["report_type"]
           reporter_id: string
           road_name?: string | null
+          severity_level?: string | null
           status?: Database["public"]["Enums"]["report_status"]
           sub_location?: string | null
           town_name?: string | null
@@ -97,15 +105,19 @@ export type Database = {
           created_at?: string
           description?: string | null
           duplicate_of?: string | null
+          escalated?: boolean | null
+          escalated_at?: string | null
           id?: string
           image_url?: string | null
           is_duplicate?: boolean | null
           landmark?: string | null
           latitude?: number
           longitude?: number
+          photo_validation?: string | null
           report_type?: Database["public"]["Enums"]["report_type"]
           reporter_id?: string
           road_name?: string | null
+          severity_level?: string | null
           status?: Database["public"]["Enums"]["report_status"]
           sub_location?: string | null
           town_name?: string | null
@@ -120,6 +132,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      flood_predictions: {
+        Row: {
+          ai_summary: string | null
+          confidence: number
+          county_id: string
+          created_at: string
+          factors: Json | null
+          id: string
+          prediction_date: string
+          risk_level: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          confidence?: number
+          county_id: string
+          created_at?: string
+          factors?: Json | null
+          id?: string
+          prediction_date?: string
+          risk_level?: string
+        }
+        Update: {
+          ai_summary?: string | null
+          confidence?: number
+          county_id?: string
+          created_at?: string
+          factors?: Json | null
+          id?: string
+          prediction_date?: string
+          risk_level?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -263,6 +308,33 @@ export type Database = {
           metric_value?: number
           recorded_at?: string
           source?: string | null
+        }
+        Relationships: []
+      }
+      water_stress_index: {
+        Row: {
+          calculated_at: string
+          components: Json | null
+          county_id: string
+          id: string
+          stress_score: number
+          valid_until: string
+        }
+        Insert: {
+          calculated_at?: string
+          components?: Json | null
+          county_id: string
+          id?: string
+          stress_score?: number
+          valid_until?: string
+        }
+        Update: {
+          calculated_at?: string
+          components?: Json | null
+          county_id?: string
+          id?: string
+          stress_score?: number
+          valid_until?: string
         }
         Relationships: []
       }
