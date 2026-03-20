@@ -163,7 +163,7 @@ const Dashboard = () => {
   // Resident notifications for admin replies and status changes
   const { unreadCount: residentUnread } = useResidentNotifications({
     userId: user?.id || null,
-    enabled: !!user && !isCountyAdmin,
+    enabled: !!user && !isAdmin,
   });
 
   if (!dashboardReady) {
