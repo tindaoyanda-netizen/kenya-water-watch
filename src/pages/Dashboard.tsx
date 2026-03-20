@@ -12,6 +12,7 @@ import ReportForm from '@/components/reporting/ReportForm';
 import DemoReportForm from '@/components/reporting/DemoReportForm';
 import ReportMarkers from '@/components/reporting/ReportMarkers';
 import AdminDashboard from '@/components/admin/AdminDashboard';
+import TeamManagement from '@/components/admin/TeamManagement';
 import MyReports from '@/components/reporting/MyReports';
 import AlertThresholds from '@/components/dashboard/AlertThresholds';
 import { Button } from '@/components/ui/button';
