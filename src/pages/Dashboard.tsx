@@ -16,7 +16,7 @@ import TeamManagement from '@/components/admin/TeamManagement';
 import MyReports from '@/components/reporting/MyReports';
 import AlertThresholds from '@/components/dashboard/AlertThresholds';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Shield, Plus, FileText, Menu, Beaker, Bell } from 'lucide-react';
+import { AlertTriangle, Shield, Plus, FileText, Menu, Beaker, Bell, Users } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRealtimeReports } from '@/hooks/useRealtimeReports';
 import { useResidentNotifications } from '@/hooks/useResidentNotifications';
