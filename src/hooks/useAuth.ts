@@ -31,7 +31,6 @@ export function useAuth() {
   });
 
   useEffect(() => {
-    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setState(prev => ({
@@ -40,7 +39,6 @@ export function useAuth() {
           user: session?.user ?? null,
         }));
 
-        // Defer profile fetch with setTimeout
         if (session?.user) {
           setTimeout(() => {
             fetchUserData(session.user.id);
@@ -56,7 +54,6 @@ export function useAuth() {
       }
     );
 
-    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setState(prev => ({
         ...prev,
@@ -76,14 +73,12 @@ export function useAuth() {
 
   const fetchUserData = async (userId: string) => {
     try {
-      // Fetch profile
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
 
-      // Fetch role
       const { data: roleData } = await supabase
         .from('user_roles')
         .select('role')
@@ -127,7 +122,6 @@ export function useAuth() {
     if (error) throw error;
     if (!data.user) throw new Error('Signup failed');
 
-    // Create profile
     const { error: profileError } = await supabase
       .from('profiles')
       .insert({
@@ -141,12 +135,12 @@ export function useAuth() {
       throw new Error('Failed to create profile');
     }
 
-    // Create role
+    const roleToInsert: UserRole = role === 'county_admin' ? 'county_admin' : 'resident';
     const { error: roleError } = await supabase
       .from('user_roles')
       .insert({
         user_id: data.user.id,
-        role,
+        role: roleToInsert,
       });
 
     if (roleError) {
@@ -171,7 +165,6 @@ export function useAuth() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     
-    // Clear local storage
     localStorage.removeItem('ag_location');
     localStorage.removeItem('ag_user');
     
@@ -184,14 +177,17 @@ export function useAuth() {
     });
   };
 
+  const isGovernmentAdmin = state.profile?.county_id === 'kenya_national' && state.role === 'county_admin';
+
   return {
     ...state,
     signUp,
     signIn,
     signOut,
-    isCountyAdmin: state.role === 'county_admin',
+    isGovernmentAdmin,
+    isCountyAdmin: state.role === 'county_admin' && !isGovernmentAdmin,
     isSubAdmin: state.role === 'sub_admin',
-    isAdmin: state.role === 'county_admin' || state.role === 'sub_admin',
+    isAdmin: (state.role === 'county_admin' || state.role === 'sub_admin') && !isGovernmentAdmin,
     isResident: state.role === 'resident',
   };
 }

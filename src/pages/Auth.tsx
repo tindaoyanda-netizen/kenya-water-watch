@@ -4,58 +4,36 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Waves, Mail, Lock, User, ArrowRight, Eye, EyeOff, MapPin, Loader2, Shield, Users } from 'lucide-react';
+import { Waves, Mail, Lock, User, ArrowRight, Eye, EyeOff, MapPin, Loader2, Shield, Users, Building2, Star } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import { useAuth, UserRole } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { kenyaCounties, getCountyByCoordinates, getTownByCoordinates } from '@/data/aquaguardData';
 import { z } from 'zod';
 
-const authSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  role: z.enum(['resident']),
-  countyId: z.string().min(1, 'Please select a county'),
-});
+const GOVT_ADMIN_SECRET = 'KENYA-GOV-2024';
 
-// Floating bubble component
 const FloatingBubble = ({ delay, size, left }: { delay: number; size: number; left: string }) => (
   <motion.div
     className="absolute rounded-full bg-primary/10 border border-primary/5"
     style={{ width: size, height: size, left }}
     initial={{ y: '100vh', opacity: 0 }}
-    animate={{
-      y: '-10vh',
-      opacity: [0, 0.6, 0.4, 0],
-    }}
-    transition={{
-      duration: 8 + Math.random() * 6,
-      delay,
-      repeat: Infinity,
-      ease: 'easeOut',
-    }}
+    animate={{ y: '-10vh', opacity: [0, 0.6, 0.4, 0] }}
+    transition={{ duration: 8 + Math.random() * 6, delay, repeat: Infinity, ease: 'easeOut' }}
   />
 );
 
-// Animated water waves for background
 const WaterWaves = () => (
   <div className="absolute bottom-0 left-0 right-0 h-40 overflow-hidden opacity-20 pointer-events-none">
     <motion.div
       className="absolute bottom-0 left-0 right-0 h-20"
-      style={{
-        background: 'linear-gradient(to top, hsl(var(--primary) / 0.3), transparent)',
-        borderRadius: '50% 50% 0 0 / 100% 100% 0 0',
-      }}
+      style={{ background: 'linear-gradient(to top, hsl(var(--primary) / 0.3), transparent)', borderRadius: '50% 50% 0 0 / 100% 100% 0 0' }}
       animate={{ scaleX: [1, 1.05, 1], y: [0, -4, 0] }}
       transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
     />
     <motion.div
       className="absolute bottom-0 left-0 right-0 h-16"
-      style={{
-        background: 'linear-gradient(to top, hsl(var(--primary) / 0.2), transparent)',
-        borderRadius: '50% 50% 0 0 / 100% 100% 0 0',
-      }}
+      style={{ background: 'linear-gradient(to top, hsl(var(--primary) / 0.2), transparent)', borderRadius: '50% 50% 0 0 / 100% 100% 0 0' }}
       animate={{ scaleX: [1.05, 1, 1.05], y: [0, -6, 0] }}
       transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
     />
@@ -68,15 +46,12 @@ const Auth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [detectedLocation, setDetectedLocation] = useState<{ town: string; county: string; countyId: string } | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    role: 'resident' as UserRole,
-    countyId: '',
-  });
+  const [selectedRole, setSelectedRole] = useState<'resident' | 'government_admin'>('resident');
+  const [govSecret, setGovSecret] = useState('');
+  const [showGovSecret, setShowGovSecret] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', countyId: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   const navigate = useNavigate();
   const { signUp, signIn } = useAuth();
   const { toast } = useToast();
@@ -91,11 +66,7 @@ const Auth = () => {
           const county = getCountyByCoordinates(latitude, longitude);
           const town = getTownByCoordinates(latitude, longitude);
           if (county) {
-            setDetectedLocation({
-              town: town?.name || county.towns[0]?.name || 'Unknown',
-              county: county.name,
-              countyId: county.id,
-            });
+            setDetectedLocation({ town: town?.name || county.towns[0]?.name || 'Unknown', county: county.name, countyId: county.id });
             setFormData(prev => ({ ...prev, countyId: county.id }));
           }
           setIsDetectingLocation(false);
@@ -107,56 +78,68 @@ const Auth = () => {
       );
     } else {
       setIsDetectingLocation(false);
-      toast({ title: 'Geolocation not supported', description: 'Please select your county manually', variant: 'destructive' });
     }
   };
 
   const validateForm = () => {
-    try {
-      if (isLogin) {
-        z.object({
-          email: z.string().email('Invalid email address'),
-          password: z.string().min(1, 'Password is required'),
-        }).parse(formData);
-      } else {
-        authSchema.parse(formData);
-      }
-      setErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: Record<string, string> = {};
-        error.errors.forEach((err) => {
-          if (err.path[0]) newErrors[err.path[0] as string] = err.message;
-        });
-        setErrors(newErrors);
-      }
-      return false;
+    const newErrors: Record<string, string> = {};
+    if (!isLogin) {
+      if (formData.name.length < 2) newErrors.name = 'Name must be at least 2 characters';
+      if (!formData.email.includes('@')) newErrors.email = 'Invalid email address';
+      if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+      if (selectedRole === 'resident' && !formData.countyId) newErrors.countyId = 'Please select a county';
+      if (selectedRole === 'government_admin' && !govSecret) newErrors.govSecret = 'Authorization code required';
+    } else {
+      if (!formData.email.includes('@')) newErrors.email = 'Invalid email address';
+      if (!formData.password) newErrors.password = 'Password is required';
     }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsSubmitting(true);
+
     try {
       if (isLogin) {
         await signIn(formData.email, formData.password);
         toast({ title: 'Welcome back!', description: 'You have successfully signed in' });
-      } else {
-        await signUp(formData.email, formData.password, formData.name, formData.countyId, 'resident');
-        toast({ title: 'Account created!', description: 'Please check your email to verify your account' });
-      }
-      if (formData.countyId) {
-        const county = kenyaCounties.find(c => c.id === formData.countyId);
-        if (county) {
-          localStorage.setItem('ag_location', JSON.stringify({ lat: county.coordinates.lat, lng: county.coordinates.lng }));
-        }
-      }
-      if (isLogin) {
         navigate('/dashboard');
       } else {
-        navigate('/permissions');
+        if (selectedRole === 'government_admin') {
+          // Validate secret code
+          if (govSecret !== GOVT_ADMIN_SECRET) {
+            setErrors({ govSecret: 'Invalid authorization code' });
+            setIsSubmitting(false);
+            return;
+          }
+          // Check if gov admin already exists
+          const res = await fetch('/api/admin/check-gov-admin');
+          const data = await res.json();
+          if (data.exists) {
+            toast({
+              title: 'Account already exists',
+              description: 'A government administrator account has already been registered.',
+              variant: 'destructive',
+            });
+            setIsSubmitting(false);
+            return;
+          }
+          // Sign up with special county_id
+          await signUp(formData.email, formData.password, formData.name, 'kenya_national', 'county_admin');
+          toast({ title: '🏛️ Government Admin Created', description: 'Your national admin account is ready. Please verify your email.' });
+          navigate('/dashboard');
+        } else {
+          await signUp(formData.email, formData.password, formData.name, formData.countyId, 'resident');
+          toast({ title: 'Account created!', description: 'Please check your email to verify your account' });
+          if (formData.countyId) {
+            const county = kenyaCounties.find(c => c.id === formData.countyId);
+            if (county) localStorage.setItem('ag_location', JSON.stringify({ lat: county.coordinates.lat, lng: county.coordinates.lng }));
+          }
+          navigate('/permissions');
+        }
       }
     } catch (error) {
       console.error('Auth error:', error);
@@ -174,17 +157,9 @@ const Auth = () => {
     }
   };
 
-  const roles = [
-    { id: 'resident', label: 'Resident', icon: Users, description: 'Submit environmental reports' },
-  ] as const;
-
-  // Stagger animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.08, delayChildren: 0.15 },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
   };
 
   const itemVariants = {
@@ -192,11 +167,15 @@ const Auth = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
   };
 
+  const roles = [
+    { id: 'resident', label: 'Resident', icon: Users, description: 'Submit environmental reports', color: 'from-primary/20 to-primary/5', border: 'border-primary/30' },
+    { id: 'government_admin', label: 'Government Admin', icon: Building2, description: 'National oversight authority', color: 'from-accent/20 to-accent/5', border: 'border-accent/30' },
+  ] as const;
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <Navbar />
 
-      {/* Animated background elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <FloatingBubble delay={0} size={60} left="10%" />
         <FloatingBubble delay={2} size={40} left="25%" />
@@ -204,8 +183,6 @@ const Auth = () => {
         <FloatingBubble delay={3} size={50} left="85%" />
         <FloatingBubble delay={4} size={35} left="45%" />
         <FloatingBubble delay={1.5} size={55} left="60%" />
-
-        {/* Gradient orbs */}
         <motion.div
           className="absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-[0.07]"
           style={{ background: 'radial-gradient(circle, hsl(var(--primary)), transparent 70%)' }}
@@ -223,12 +200,8 @@ const Auth = () => {
       <WaterWaves />
 
       <div className="min-h-screen flex items-center justify-center px-4 pt-20 pb-8 relative z-10">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="w-full max-w-md"
-        >
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="w-full max-w-md">
+
           {/* Logo & Title */}
           <motion.div variants={itemVariants} className="text-center mb-8">
             <motion.div
@@ -237,7 +210,6 @@ const Auth = () => {
               transition={{ type: 'spring', stiffness: 300 }}
             >
               <Waves className="w-8 h-8 text-primary-foreground" />
-              {/* Ripple effect */}
               <motion.div
                 className="absolute inset-0 rounded-2xl border-2 border-primary/30"
                 animate={{ scale: [1, 1.4], opacity: [0.5, 0] }}
@@ -256,55 +228,40 @@ const Auth = () => {
                 {isLogin ? 'Welcome Back' : 'Join AquaGuard Kenya'}
               </motion.h1>
             </AnimatePresence>
-            <motion.p
-              className="text-muted-foreground mt-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              {isLogin ? 'Sign in to access your dashboard' : 'Create your account to start reporting'}
+            <motion.p className="text-muted-foreground mt-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+              {isLogin ? 'Sign in to access your dashboard' : 'Create your account to get started'}
             </motion.p>
           </motion.div>
 
           {/* Form Card */}
-          <motion.div
-            variants={itemVariants}
-            className="relative"
-          >
-            {/* Card glow effect */}
+          <motion.div variants={itemVariants} className="relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-accent/10 to-primary/20 rounded-3xl blur-xl opacity-50" />
-            
+
             <div className="card-glass p-8 relative">
               <form onSubmit={handleSubmit} className="space-y-5">
+
+                {/* Name Field */}
                 <AnimatePresence mode="wait">
-                  {/* Name Field (Sign Up only) */}
                   {!isLogin && (
-                    <motion.div
-                      key="name"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-2 overflow-hidden"
-                    >
+                    <motion.div key="name" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} className="space-y-2 overflow-hidden">
                       <Label htmlFor="name">Full Name *</Label>
                       <div className="relative group">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <Input
                           id="name"
                           type="text"
-                          placeholder="Enter your name"
-                          className={`pl-10 transition-all duration-200 focus:shadow-md focus:shadow-primary/10 ${errors.name ? 'border-destructive' : ''}`}
+                          placeholder="Enter your full name"
+                          className={`pl-10 ${errors.name ? 'border-destructive' : ''}`}
                           value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          onChange={e => setFormData({ ...formData, name: e.target.value })}
                         />
                       </div>
-                      {errors.name && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-destructive">{errors.name}</motion.p>}
+                      {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                     </motion.div>
                   )}
                 </AnimatePresence>
 
-                {/* Email Field */}
+                {/* Email */}
                 <motion.div variants={itemVariants} className="space-y-2">
                   <Label htmlFor="email">Email Address *</Label>
                   <div className="relative group">
@@ -313,15 +270,15 @@ const Auth = () => {
                       id="email"
                       type="email"
                       placeholder="you@example.com"
-                      className={`pl-10 transition-all duration-200 focus:shadow-md focus:shadow-primary/10 ${errors.email ? 'border-destructive' : ''}`}
+                      className={`pl-10 ${errors.email ? 'border-destructive' : ''}`}
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={e => setFormData({ ...formData, email: e.target.value })}
                     />
                   </div>
-                  {errors.email && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-destructive">{errors.email}</motion.p>}
+                  {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
                 </motion.div>
 
-                {/* Password Field */}
+                {/* Password */}
                 <motion.div variants={itemVariants} className="space-y-2">
                   <Label htmlFor="password">Password *</Label>
                   <div className="relative group">
@@ -330,120 +287,75 @@ const Auth = () => {
                       id="password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
-                      className={`pl-10 pr-10 transition-all duration-200 focus:shadow-md focus:shadow-primary/10 ${errors.password ? 'border-destructive' : ''}`}
+                      className={`pl-10 pr-10 ${errors.password ? 'border-destructive' : ''}`}
                       value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      onChange={e => setFormData({ ...formData, password: e.target.value })}
                     />
-                    <motion.button
-                      type="button"
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </motion.button>
+                    </button>
                   </div>
-                  {errors.password && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-destructive">{errors.password}</motion.p>}
+                  {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
                 </motion.div>
 
-                {/* Role Selection (Sign Up only) */}
+                {/* Role Selection */}
                 <AnimatePresence mode="wait">
                   {!isLogin && (
-                    <motion.div
-                      key="role"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-2 overflow-hidden"
-                    >
-                      <Label>I am a... *</Label>
+                    <motion.div key="role" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} className="space-y-2 overflow-hidden">
+                      <Label>Account Type *</Label>
                       <div className="grid grid-cols-2 gap-3">
-                        {roles.map((role) => (
+                        {roles.map(role => (
                           <motion.button
                             key={role.id}
                             type="button"
-                            whileHover={{ scale: 1.03 }}
+                            whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.97 }}
-                            onClick={() => setFormData({ ...formData, role: role.id })}
-                            className={`p-3 rounded-xl border text-left transition-all duration-200 ${
-                              formData.role === role.id
-                                ? 'border-primary bg-primary/10 ring-2 ring-primary/20 shadow-md shadow-primary/5'
-                                : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                            onClick={() => setSelectedRole(role.id)}
+                            className={`p-3 rounded-xl border-2 text-left transition-all duration-200 relative overflow-hidden ${
+                              selectedRole === role.id
+                                ? `${role.border} bg-gradient-to-br ${role.color} ring-2 ${role.id === 'government_admin' ? 'ring-accent/20' : 'ring-primary/20'} shadow-md`
+                                : 'border-border hover:border-primary/40 hover:bg-muted/50'
                             }`}
                           >
-                            <role.icon className={`w-5 h-5 mb-1 transition-colors ${formData.role === role.id ? 'text-primary' : 'text-muted-foreground'}`} />
-                            <span className="font-medium text-sm block">{role.label}</span>
-                            <span className="text-xs text-muted-foreground">{role.description}</span>
+                            {role.id === 'government_admin' && selectedRole === 'government_admin' && (
+                              <motion.div className="absolute top-1.5 right-1.5" initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                                <Star className="w-3 h-3 text-accent fill-accent" />
+                              </motion.div>
+                            )}
+                            <role.icon className={`w-5 h-5 mb-1.5 transition-colors ${selectedRole === role.id ? role.id === 'government_admin' ? 'text-accent' : 'text-primary' : 'text-muted-foreground'}`} />
+                            <span className="font-semibold text-sm block">{role.label}</span>
+                            <span className="text-xs text-muted-foreground leading-tight">{role.description}</span>
                           </motion.button>
                         ))}
                       </div>
-                      {errors.role && <p className="text-sm text-destructive">{errors.role}</p>}
                     </motion.div>
                   )}
                 </AnimatePresence>
 
-                {/* County Selection (Sign Up only) */}
+                {/* County Selection — Resident only */}
                 <AnimatePresence mode="wait">
-                  {!isLogin && (
-                    <motion.div
-                      key="county"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3, delay: 0.05 }}
-                      className="space-y-2 overflow-hidden"
-                    >
+                  {!isLogin && selectedRole === 'resident' && (
+                    <motion.div key="county" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} className="space-y-2 overflow-hidden">
                       <Label>Your County *</Label>
                       {detectedLocation ? (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          className="flex items-center gap-2 p-3 bg-success/10 border border-success/20 rounded-lg"
-                        >
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center gap-2 p-3 bg-success/10 border border-success/20 rounded-lg">
                           <MapPin className="w-5 h-5 text-success" />
-                          <span className="text-sm font-medium text-success">
-                            {detectedLocation.town}, {detectedLocation.county}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => { setDetectedLocation(null); setFormData(prev => ({ ...prev, countyId: '' })); }}
-                            className="ml-auto text-xs text-muted-foreground hover:text-foreground"
-                          >
-                            Change
-                          </button>
+                          <span className="text-sm font-medium text-success">{detectedLocation.town}, {detectedLocation.county}</span>
+                          <button type="button" onClick={() => { setDetectedLocation(null); setFormData(prev => ({ ...prev, countyId: '' })); }} className="ml-auto text-xs text-muted-foreground hover:text-foreground">Change</button>
                         </motion.div>
                       ) : (
                         <div className="space-y-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="w-full group/detect"
-                            onClick={detectLocation}
-                            disabled={isDetectingLocation}
-                          >
-                            {isDetectingLocation ? (
-                              <>
-                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                Detecting...
-                              </>
-                            ) : (
-                              <>
-                                <MapPin className="w-4 h-4 mr-2 group-hover/detect:text-primary transition-colors" />
-                                Auto-Detect Location
-                              </>
-                            )}
+                          <Button type="button" variant="outline" className="w-full" onClick={detectLocation} disabled={isDetectingLocation}>
+                            {isDetectingLocation ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Detecting...</> : <><MapPin className="w-4 h-4 mr-2" />Auto-Detect Location</>}
                           </Button>
                           <div className="text-center text-xs text-muted-foreground">or select manually</div>
                           <select
                             value={formData.countyId}
-                            onChange={(e) => setFormData({ ...formData, countyId: e.target.value })}
-                            className={`w-full h-10 px-3 rounded-md border bg-background text-sm transition-all focus:shadow-md focus:shadow-primary/10 ${
-                              errors.countyId ? 'border-destructive' : 'border-input'
-                            }`}
+                            onChange={e => setFormData({ ...formData, countyId: e.target.value })}
+                            className={`w-full h-10 px-3 rounded-md border bg-background text-sm ${errors.countyId ? 'border-destructive' : 'border-input'}`}
                           >
                             <option value="">Select a county...</option>
-                            {kenyaCounties.map((county) => (
+                            {kenyaCounties.map(county => (
                               <option key={county.id} value={county.id}>{county.name}</option>
                             ))}
                           </select>
@@ -454,16 +366,48 @@ const Auth = () => {
                   )}
                 </AnimatePresence>
 
-                {/* Submit Button */}
+                {/* Government Admin — Authorization Code */}
+                <AnimatePresence mode="wait">
+                  {!isLogin && selectedRole === 'government_admin' && (
+                    <motion.div key="govSecret" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} className="space-y-2 overflow-hidden">
+                      {/* Info banner */}
+                      <div className="flex items-start gap-3 p-3 bg-accent/10 border border-accent/20 rounded-xl">
+                        <Shield className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-semibold text-accent">Government Authorization Required</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">Only one national administrator account is permitted. Enter the authorized government access code to proceed.</p>
+                        </div>
+                      </div>
+                      <Label htmlFor="govSecret">Authorization Code *</Label>
+                      <div className="relative group">
+                        <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-colors" />
+                        <Input
+                          id="govSecret"
+                          type={showGovSecret ? 'text' : 'password'}
+                          placeholder="Enter government access code"
+                          className={`pl-10 pr-10 ${errors.govSecret ? 'border-destructive' : 'focus:border-accent'}`}
+                          value={govSecret}
+                          onChange={e => setGovSecret(e.target.value)}
+                        />
+                        <button type="button" onClick={() => setShowGovSecret(!showGovSecret)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                          {showGovSecret ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                      {errors.govSecret && <p className="text-sm text-destructive">{errors.govSecret}</p>}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Submit */}
                 <motion.div variants={itemVariants}>
                   <Button
                     type="submit"
                     variant="hero"
                     size="lg"
-                    className="w-full group overflow-hidden relative"
+                    className={`w-full group overflow-hidden relative ${!isLogin && selectedRole === 'government_admin' ? 'bg-gradient-to-r from-accent to-primary hover:opacity-95' : ''}`}
                     disabled={isSubmitting}
+                    data-testid="button-submit"
                   >
-                    {/* Shimmer effect on button */}
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
                       animate={{ x: ['-200%', '200%'] }}
@@ -471,13 +415,11 @@ const Auth = () => {
                     />
                     <span className="relative flex items-center justify-center gap-2">
                       {isSubmitting ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          {isLogin ? 'Signing in...' : 'Creating account...'}
-                        </>
+                        <><Loader2 className="w-5 h-5 animate-spin" />{isLogin ? 'Signing in...' : 'Creating account...'}</>
                       ) : (
                         <>
-                          {isLogin ? 'Sign In' : 'Create Account'}
+                          {!isLogin && selectedRole === 'government_admin' && <Building2 className="w-5 h-5" />}
+                          {isLogin ? 'Sign In' : selectedRole === 'government_admin' ? 'Create Government Account' : 'Create Account'}
                           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </>
                       )}
@@ -488,41 +430,32 @@ const Auth = () => {
 
               {/* Divider */}
               <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-border" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="bg-card px-4 text-muted-foreground">or</span>
-                </div>
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
+                <div className="relative flex justify-center text-sm"><span className="bg-card px-4 text-muted-foreground">or</span></div>
               </div>
 
-              {/* Toggle Auth Mode */}
+              {/* Toggle */}
               <p className="text-center text-muted-foreground">
                 {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
                 <motion.button
                   type="button"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => { setIsLogin(!isLogin); setErrors({}); }}
+                  onClick={() => { setIsLogin(!isLogin); setErrors({}); setSelectedRole('resident'); setGovSecret(''); }}
                   className="text-primary font-semibold hover:underline underline-offset-2"
                 >
-                  {isLogin ? 'Sign Up' : 'Sign In'}
+                  {isLogin ? 'Create account' : 'Sign in'}
                 </motion.button>
               </p>
+
+              {/* Back to home */}
+              <div className="mt-4 text-center">
+                <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1">
+                  ← Back to home
+                </Link>
+              </div>
             </div>
           </motion.div>
-
-          {/* Info Notice */}
-          <motion.p
-            variants={itemVariants}
-            className="text-center text-sm text-muted-foreground mt-6"
-          >
-            {isLogin ? (
-              '🔒 Your data is encrypted and secure'
-            ) : (
-              '📍 Residents can submit environmental reports for their community'
-            )}
-          </motion.p>
         </motion.div>
       </div>
     </div>

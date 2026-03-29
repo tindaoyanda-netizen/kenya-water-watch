@@ -13,6 +13,7 @@ import DemoReportForm from '@/components/reporting/DemoReportForm';
 import ReportMarkers from '@/components/reporting/ReportMarkers';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import TeamManagement from '@/components/admin/TeamManagement';
+import GovernmentAdminDashboard from '@/components/admin/GovernmentAdminDashboard';
 import MyReports from '@/components/reporting/MyReports';
 import AlertThresholds from '@/components/dashboard/AlertThresholds';
 import { Button } from '@/components/ui/button';
@@ -34,7 +35,7 @@ import {
 const Dashboard = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { user, profile, role, isLoading: authLoading, isCountyAdmin, isSubAdmin, isAdmin } = useAuth();
+  const { user, profile, role, isLoading: authLoading, isCountyAdmin, isSubAdmin, isAdmin, isGovernmentAdmin } = useAuth();
   
   const [selectedCounty, setSelectedCounty] = useState<CountyData | null>(null);
   const [timeRange, setTimeRange] = useState<'7' | '30' | '90'>('30');
@@ -65,6 +66,7 @@ const Dashboard = () => {
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [showAlertThresholds, setShowAlertThresholds] = useState(false);
   const [showTeamManagement, setShowTeamManagement] = useState(false);
+  const [showGovAdminDashboard, setShowGovAdminDashboard] = useState(false);
   const [dashboardReady, setDashboardReady] = useState(false);
   const nationalStats = getNationalStats();
 
@@ -165,6 +167,13 @@ const Dashboard = () => {
     userId: user?.id || null,
     enabled: !!user && !isAdmin,
   });
+
+  // Automatically open government admin dashboard when user is a government admin
+  useEffect(() => {
+    if (dashboardReady && isGovernmentAdmin) {
+      setShowGovAdminDashboard(true);
+    }
+  }, [dashboardReady, isGovernmentAdmin]);
 
   if (!dashboardReady) {
     return <DashboardSkeleton />;
@@ -431,6 +440,33 @@ const Dashboard = () => {
         isOpen={showAlertThresholds}
         onClose={() => setShowAlertThresholds(false)}
       />
+
+      {/* Government Admin — floating entry button */}
+      {isGovernmentAdmin && !showGovAdminDashboard && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="fixed bottom-6 right-6 z-40"
+        >
+          <Button
+            onClick={() => setShowGovAdminDashboard(true)}
+            className="bg-gradient-to-r from-primary to-accent text-white shadow-xl px-5 py-3 rounded-2xl h-auto gap-2 font-semibold text-sm hover:opacity-90"
+          >
+            <Shield className="w-5 h-5" />
+            Open National Dashboard
+          </Button>
+        </motion.div>
+      )}
+
+      {/* Government Admin Dashboard Overlay */}
+      <AnimatePresence>
+        {isGovernmentAdmin && showGovAdminDashboard && (
+          <GovernmentAdminDashboard
+            onClose={() => setShowGovAdminDashboard(false)}
+            adminName={profile?.full_name || 'Administrator'}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
