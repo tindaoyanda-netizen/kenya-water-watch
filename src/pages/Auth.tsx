@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { kenyaCounties, getCountyByCoordinates, getTownByCoordinates } from '@/data/aquaguardData';
 import { z } from 'zod';
 
-const GOVT_ADMIN_SECRET = 'KENYA-GOV-2024';
+const GOVT_ADMIN_SECRET = 'KENYA-GOV-2026';
 
 const FloatingBubble = ({ delay, size, left }: { delay: number; size: number; left: string }) => (
   <motion.div
